@@ -9,7 +9,11 @@
     ```
     mkdir /vast/scratch/users/$USER/nf-training-run
     ```
-3. Load the nextflow module
+3. Change to the run directory
+    ```
+    cd /vast/scratch/users/$USER/nf-training-run
+    ```
+4. Load the nextflow module
     ```
     module load nextflow
     ```
