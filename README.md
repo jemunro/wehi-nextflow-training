@@ -33,4 +33,5 @@ An example pipeline using bwa, samtools, bcftools and multiqc
 * [Official Nextflow Slack](https://www.nextflow.io/slack-invite.html)
 * [nf-core](https://nf-co.re/) - community pipelines
 * [nf-core Slack](https://nf-co.re/join/slack)
-* [Introduction to Bioinformatics workflows with Nextflow and nf-core](https://carpentries-incubator.github.io/workflows-nextflow/index.html) - comprehensive Nextflow tutorial
+* [Introduction to Bioinformatics workflows with Nextflow and nf-core](https://carpentries-incubator.github.io/workflows-nextflow/index.html) - comprehensive Nextflow tutorial using DSL2
+* [Groovy Web Console](https://groovyconsole.appspot.com/) - useful for testing Groovy/Java code fragments
