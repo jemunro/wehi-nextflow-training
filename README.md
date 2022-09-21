@@ -1,5 +1,19 @@
 # WEHI Nextflow Training
 
+## Setup
+1. Clone this repostiory to your home directory from vc7-shared
+    ```
+    git clone ...
+    ```
+2. Create a run directory on /vast/
+    ```
+    mkdir /vast/scratch/users/$USER/nf-training-run
+    ```
+3. Load the nextflow module
+    ```
+    module load nextflow
+    ```
+
 ## [Module 1: Hello World](module_1/README.md)
 A brief introduction to the Nextflow language
 
