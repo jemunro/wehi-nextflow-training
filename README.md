@@ -7,7 +7,7 @@
     ```
 2. Create a run directory on /vast/
     ```
-    mkdir /vast/scratch/users/$USER/nf-training-run
+    mkdir -p /vast/scratch/users/$USER/nf-training-run
     ```
 3. Change to the run directory
     ```

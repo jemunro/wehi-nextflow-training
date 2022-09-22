@@ -1,11 +1,11 @@
 
-greeting = 'Hello world'
+greeting = 'Hello'
 
 process greet {
     output: stdout
-    script: "echo -n $greeting"
+    script: "echo -n $greeting world"
 }
 
 workflow {
-    greet() | view
+    greet | view
 }
