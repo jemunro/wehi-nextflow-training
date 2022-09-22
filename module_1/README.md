@@ -38,6 +38,10 @@
 
 ## 2. Connecting processes
 * We can connect processes together using the pipe operator. Here we have added a new process `ask_question` that takes the output of `greet` and adds a question to it.
+* When a process takes input from another process, we need to define the `input:` block
+   * `val(x)` defines the type of input ("value", more on that later), and assigns a name to the input variable (`"x"`)
+
+
    ```nextflow
    greeting = 'Hello'
    question = 'how are you'
@@ -48,9 +52,9 @@
    }
 
    process ask_question {
-      input: val(greeted)
+      input: val(x)
       output: stdout
-      script: "echo -n $greeted, $question?"
+      script: "echo -n $x, $question?"
    }
 
    workflow {
@@ -77,9 +81,9 @@
    }
 
    process ask_question {
-      input: val(greeted)
+      input: val(x)
       output: stdout
-      script: "echo -n $greeted, question?"
+      script: "echo -n $x, question?"
    }
 
    workflow {
@@ -93,7 +97,7 @@
    nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf --greeting 'Hey'
    ```
 ### **Exercise 1.3**
-1. Add the code above to `hello_world.nf` and run it, overriding `greeting`
-2. Move the variable `question` to a parameter and run the workflow overriding this value
+1. Convert `greeting` to an input paramter in `hello_world.nf` as in the example above. Run `hello world.nf`, providing `--greeting` as a command line arguemnt.
+2. Also Convert `question` to an input paramter. Run `hello world.nf`, providing both `--greeting` and `--question` as a command line arguments.
 
 ## Q&A
