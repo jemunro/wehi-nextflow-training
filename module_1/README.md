@@ -100,4 +100,12 @@
 1. Convert `greeting` to an input paramter in `hello_world.nf` as in the example above. Run `hello world.nf`, providing `--greeting` as a command line arguemnt.
 2. Also Convert `question` to an input paramter. Run `hello world.nf`, providing both `--greeting` and `--question` as a command line arguments.
 
-## Q&A
+## 4. Workflow Caching
+* Nextflow provides a mechanism to reuse results from previously run workflows, potentially saving costly processes from being recomputed.
+* To use this feature, provide the `-resume` argument at the command line:
+   ```
+   nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf -resume
+   ```
+
+### **Exercise 1.4**
+1. Experiment by running `hello_world.nf` with and without `-resume`, and with different parameters `--greeting` and `--question`. When are chached tasks used?

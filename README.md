@@ -15,7 +15,7 @@
     ```
 4. Load the nextflow module
     ```
-    module load nextflow
+    module load nextflow/22.04.5
     ```
 
 ## [Module 1: Hello World](module_1/README.md)
