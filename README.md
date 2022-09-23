@@ -25,7 +25,7 @@ A brief introduction to the Nextflow language
 Core concepts for developing Nextflow workflows
 
 ## [Module 3: NGS Variant Calling Pipeline](module_3/README.md)
-An example pipeline using bwa, samtools, bcftools and multiqc
+An example pipeline calling SARS-Cov-2 variants using bwa, samtools, bcftools and then visualising with R
 
 
 ## Additional Resources
