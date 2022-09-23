@@ -3,8 +3,9 @@ process index_ref {
     cpus 1
     memory '1 GB'
     time '1 h'
-    module 'bwa/0.7.17'
-    module 'samtools/1.16.1'
+    // TODO: provide bwa and samtools through conda or a module
+    // see https://www.nextflow.io/docs/latest/conda.html#use-conda-package-names
+    // see https://www.nextflow.io/docs/latest/process.html#module
 
     input:
     path(ref_fasta_gz)
@@ -22,11 +23,10 @@ process index_ref {
 }
 
 process bwa_mem_align {
-    cpus 2
-    memory '2 GB'
-    time '2 h'
-    module 'bwa/0.7.17'
-    module 'samtools/1.16.1'
+    // TODO: set cpus    https://www.nextflow.io/docs/latest/process.html#cpus
+    // TODO: set memory  https://www.nextflow.io/docs/latest/process.html#memory
+    // TODO: set time    https://www.nextflow.io/docs/latest/process.html#time
+    // TODO: provide bwa and samtools through conda or a module
     tag { sample }
 
     input:
@@ -44,53 +44,32 @@ process bwa_mem_align {
     """
 }
 
-/*
-TODO: process samtools_sort
-sort and index bam file
-http://www.htslib.org/doc/samtools-sort.html
-e.g. samtools sort --threads 2 $input_bam > $sorted_bam
-     samtools index $sorted_bam
-inputs from bwa_mem_align
-output: sample, sorted_bam, bam_index
-*/
-
 process samtools_sort {
     cpus 2
     memory '2 GB'
     time '2 h'
-    module 'samtools/1.16.1'
+    //TODO: provide samtools through a module or conda
     tag { sample }
 
     input:
     tuple val(sample), path(input_bam)
 
     output:
-    tuple val(sample), path(sorted_bam), path(bam_index)
+    // TODO: output sample, sorted_bam and bam_index
 
     script:
     sorted_bam = sample + '.sorted.bam'
     bam_index = sorted_bam + '.bai'
-    """
-    samtools sort --threads 2 $input_bam > $sorted_bam
-    samtools index $sorted_bam
-    """
+    //TODO: write bash script for sorting with `samtools sort` and indexing with `samtools index`
+    // see http://www.htslib.org/doc/samtools-sort.html
 }
 
-/*
-TODO: process bcftools_call
-call variants using bcftools
-find an apropriate module or bioconda pacakge
-see https://samtools.github.io/bcftools/howtos/variant-calling.html
-input from samtools_sort
-input from index_ref
-output: vcf
-*/
 
 process bcftools_call {
     cpus 2
     memory '2 GB'
     time '2 h'
-    module 'bcftools/1.16'
+    //TODO: provide bcftools through a module or conda
     tag { sample }
 
     input:
@@ -98,29 +77,23 @@ process bcftools_call {
     tuple path(ref_fasta), path(ref_indices)
 
     output:
-    path(vcf)
+    path(bcf)
 
     script:
-    vcf =  sample + 'vcf.gz'
-    """
-    bcftools mpileup -Ou -f $ref_fasta $sorted_bam | bcftools call -mv -Oz -o $vcf
-    """
+    bcf =  sample + '.bcf'
+    //TODO: write bash script for variant calling
+    // see https://samtools.github.io/bcftools/howtos/variant-calling.html
 }
 
-/*
-TODO: process bcftools merge
-http://samtools.github.io/bcftools/bcftools.html#merge
-merge variant calls
-*/
 
 process bcftools_merge {
     cpus 2
     memory '2 GB'
     time '2 h'
-    module 'bcftools/1.16'
+    //TODO: provide bcftools through a module or conda
 
     input:
-    path(vcfs)
+    path(bcfs)
 
     output:
     path(merged_vcf)
@@ -137,7 +110,8 @@ process plot_variants {
     memory '2 GB'
     time '1 h'
     container 'library://jemunro/training/tidyverse-pheatmap'
-    publishDir "output", mode: 'copy'
+    // TODO publish output using publishDir directive
+    // see https://www.nextflow.io/docs/latest/process.html#publishdir
 
     input:
     path(vcf)
