@@ -13,17 +13,20 @@
 
 * [hello_world.nf](hello_world.nf) is a simple Nextflow script.
    ```nextflow
-   greeting = 'Hello' // <-- (1) variable assignment
+   audience = 'world'             // (1) variable assignment
 
    // (2) process definition
    process greet {
+      input: val(x)
       output: stdout
-      script: "echo -n $greeting world" // <-- (3) variable interpolation
+      script: "echo -n Hello $x!" // (3) variable interpolation
    }
 
-   // 4) workflow definition
+   // (4) workflow definition
    workflow {
-      greet | view  // <-- (5) piping
+      channel.from(audience) |    // (5) channel creation, 
+        greet |                   // (7) channel piped into process
+        view                      // (8) view operator, prints channels contents
    }
    ```
 1. We can assign variables as usual

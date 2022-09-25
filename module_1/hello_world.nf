@@ -1,11 +1,14 @@
 
-greeting = 'Hello'
+audience = 'world'
 
 process greet {
+    input: val(x)
     output: stdout
-    script: "echo -n $greeting world"
+    script: "echo -n Hello $x!"
 }
 
 workflow {
-    greet | view
+    channel.from(audience) |
+        greet |
+        view
 }
