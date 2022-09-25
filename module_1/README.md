@@ -15,14 +15,14 @@
    ```nextflow
    audience = 'world'             // (1) variable assignment
 
-   // (2) process definition
+   // -------- (2) process definition --------
    process greet {
       input: val(x)
       output: stdout
       script: "echo -n Hello $x!" // (3) variable interpolation
    }
 
-   // (4) workflow definition
+   // -------- (4) workflow definition --------
    workflow {
       channel.from(audience) |    // (5) channel creation, 
         greet |                   // (7) channel piped into process
@@ -31,68 +31,43 @@
    ```
 1. We can assign variables as usual
 2. Nextflow processes define units of computations carried out by other software. The `script:` section defines a bash script to be run.
-3. Variable interpolation: `$message` is replace with `Hello`
+3. Variable interpolation: `$x` is replaced with `world`
 4. Workflow definition. Workflows define connections (Channels) bewteen `processes` and `operators`. Data is passed along channels *asynchronously*.
 ### **Exercise 1.1**
 1. Run `hello_world.nf`
    ```
    nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf
    ```
+2. Change `audience` to be a list of values (e.g. `audience = ['world',  'WEHI']`) and run `hello_world.nf`? What happens?
+
 
 ## 2. Connecting processes
 * We can connect processes together using the pipe operator. Here we have added a new process `ask_question` that takes the output of `greet` and adds a question to it.
-* When a process takes input from another process, we need to define the `input:` block
-   * `val(x)` defines the type of input ("value", more on that later), and assigns a name to the input variable (`"x"`)
-
 
    ```nextflow
-   greeting = 'Hello'
-   question = 'how are you'
-
-   process greet {
-      output: stdout
-      script: "echo -n $greeting world"
-   }
+   question = 'how are you?'
 
    process ask_question {
       input: val(x)
       output: stdout
-      script: "echo -n $x, $question?"
-   }
-
-   workflow {
-      greet | 
-         ask_question |
-         view  
+      script: "echo -n $x, $question"
    }
    ```
-
 ### **Exercise 1.2**
-1. Add the code above to `hello_world.nf` and run it 
-2. Add another process that appends additional text to the output of `ask_question` (e.g. "Some weather we have had lately!")
+1. Add the above process definition to `hello_world.nf`
+2. Add `ask_question |` to the workflow definition between `greet |` and `view`
+3. Run `hello_world.nf`
 
 ## 3. Workflow Parameters
 * Nextflow workflows container a special variable `params` which is a Map (equivalent to a named list in `R` or a dict in `python`)
-* We can set default values for `params` in the Nextflow script
+* We can set default values for `params` in the Nextflow script, e.g.:
    ```nextflow
-   params.greeting = 'Hello world'
-   question = 'how are you'
+   params.greeting = 'Hello'
 
    process greet {
-      output: stdout
-      script: "echo -n $params.greeting"
-   }
-
-   process ask_question {
       input: val(x)
       output: stdout
-      script: "echo -n $x, question?"
-   }
-
-   workflow {
-      greet |
-         ask_question |
-         view
+      script: "echo -n $params.greeting $x!"
    }
    ```
 * We can override parameters with command line arguments, e.g.
