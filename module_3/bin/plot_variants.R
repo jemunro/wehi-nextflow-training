@@ -41,8 +41,8 @@ png(plot_name, width=6, height=4, units="in", res=1200)
 
 pheatmap(variant_matrix,
          color = viridisLite::cividis(2),
-         cluster_cols = F,
-         show_rownames = F,
+         cluster_cols = FALSE,
+         show_rownames = FALSE,
          clustering_distance_rows  = 'manhattan',
          clustering_method = 'average',
          main = 'Victorian SARS-CoV-2 Varaints 2020',
