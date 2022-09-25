@@ -1,9 +1,7 @@
+## Module 1: NGS Variant Calling Pipeline
 
 ### Learning Objectives
-1. assign variables
-2. process definition
-   1. output: stdout
-   2. script
-3. workflow definition
-5. view operator
-6. run a simple workflow
+1. Work on a practical example of a nextflow pipeline
+
+### **Exercise 3**
+* The pipeline in [`main.nf`](main.nf) is incomplete. Finish off the `TODO` sections in [`processes.nf`](processes.nf) one at a time, then uncomment the corresponding section in `main.nf` and run the workflow.
