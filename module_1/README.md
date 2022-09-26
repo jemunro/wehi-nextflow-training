@@ -12,32 +12,32 @@
 
 * [hello_world.nf](hello_world.nf) is a simple Nextflow script.
    ```nextflow
-   audience = 'world'             // (1) variable assignment
+   audience = ['world']            // (1) variable assignment
 
    // -------- (2) process definition --------
    process greet {
-      input: val(x)
+      input: val(x) 
       output: stdout
-      script: "echo -n Hello $x!" // (3) variable interpolation
+      script: "echo -n Hello $x!"  // (3) variable interpolation
    }
 
    // -------- (4) workflow definition --------
    workflow {
-      channel.from(audience) |    // (5) channel creation, 
-        greet |                   // (7) channel piped into process
-        view                      // (8) view operator, prints channels contents
+      channel.fromList(audience) | // (5) Channel creation
+        greet | 
+        view  
    }
    ```
 1. We can assign variables as usual
 2. Nextflow processes define units of computations carried out by other software. The `script:` section defines a bash script to be run.
-3. Variable interpolation: `$x` is replaced with `world`
-4. Workflow definition. Workflows define connections (Channels) bewteen `processes` and `operators`. Data is passed along channels *asynchronously*.
+3. Variable interpolation: `$x` is replaced with the value ("world")
+4. Workflows define connections (Channels) bewteen `processes` and `operators`.
 ### **Exercise 1.1**
 1. Run `hello_world.nf`
    ```
    nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf
    ```
-2. Change `audience` to be a list of values (e.g. `audience = ['world',  'WEHI']`) and run `hello_world.nf`? What happens?
+2. Add additional items to the list `audience` to be a list of values (e.g. `audience = ['world',  'WEHI']`) and run `hello_world.nf`? What happens?
 
 
 ## 2. Connecting processes
@@ -58,7 +58,7 @@
 3. Run `hello_world.nf`
 
 ## 3. Workflow Parameters
-* Nextflow workflows container a special variable `params` which is a Map (equivalent to a named list in `R` or a dict in `python`)
+* Nextflow workflows contain a special variable `params` which is a Map (equivalent to a named list in `R` or a dict in `python`)
 * We can set default values for `params` in the Nextflow script, e.g.:
    ```nextflow
    params.greeting = 'Hello'
@@ -75,7 +75,7 @@
    ```
 ### **Exercise 1.3**
 1. Convert `greeting` to an input paramter in `hello_world.nf` as in the example above. Run `hello world.nf`, providing `--greeting` as a command line arguemnt.
-2. Also Convert `question` to an input paramter. Run `hello world.nf`, providing both `--greeting` and `--question` as a command line arguments.
+2. Also convert `question` to an input paramter. Run `hello world.nf`, providing both `--greeting` and `--question` as a command line arguments.
 
 ## 4. Workflow Caching
 * Nextflow provides a mechanism to reuse results from previously run workflows, potentially saving costly processes from being recomputed.

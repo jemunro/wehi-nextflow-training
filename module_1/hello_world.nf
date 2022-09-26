@@ -1,5 +1,5 @@
 
-audience = 'world'
+audience = ['world']
 
 process greet {
     input: val(x)
@@ -8,7 +8,7 @@ process greet {
 }
 
 workflow {
-    channel.from(audience) |
+    channel.fromList(audience) |
         greet |
         view
 }
