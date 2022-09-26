@@ -1,4 +1,4 @@
-## Module 1: NGS Variant Calling Pipeline
+## Module 3: NGS Variant Calling Pipeline
 
 ### Learning Objectives
 1. Work on a practical example of a nextflow pipeline

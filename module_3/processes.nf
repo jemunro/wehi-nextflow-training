@@ -3,8 +3,7 @@ process index_ref {
     cpus 1
     memory '1 GB'
     time '1 h'
-    // TODO: provide bwa and samtools through conda or a module
-    // see https://www.nextflow.io/docs/latest/conda.html#use-conda-package-names
+    // TODO: provide bwa and samtools through modules
     // see https://www.nextflow.io/docs/latest/process.html#module
 
     input:
@@ -26,7 +25,7 @@ process bwa_mem_align {
     // TODO: set cpus    https://www.nextflow.io/docs/latest/process.html#cpus
     // TODO: set memory  https://www.nextflow.io/docs/latest/process.html#memory
     // TODO: set time    https://www.nextflow.io/docs/latest/process.html#time
-    // TODO: provide bwa and samtools through conda or a module
+    // TODO: provide bwa and samtools through modules
     tag { sample }
 
     input:
@@ -48,7 +47,7 @@ process samtools_sort {
     cpus 2
     memory '2 GB'
     time '2 h'
-    //TODO: provide samtools through a module or conda
+    //TODO: provide samtools through a modules
     tag { sample }
 
     input:
@@ -60,8 +59,10 @@ process samtools_sort {
     script:
     sorted_bam = sample + '.sorted.bam'
     bam_index = sorted_bam + '.bai'
-    //TODO: write bash script for sorting with `samtools sort` and indexing with `samtools index`
-    // see http://www.htslib.org/doc/samtools-sort.html
+    """
+    samtools sort -t 2 $input_bam > $sorted_bam
+    samtools index $sorted_bam
+    """
 }
 
 
@@ -69,7 +70,7 @@ process bcftools_call {
     cpus 2
     memory '2 GB'
     time '2 h'
-    //TODO: provide bcftools through a module or conda
+    //TODO: provide bcftools through a module
     tag { sample }
 
     input:
@@ -96,7 +97,7 @@ process bcftools_merge {
     path(bcfs)
 
     output:
-    path(merged_vcf)
+    //TODO: add output
     
     script:
     merged_vcf = 'merged.vcf.gz'
