@@ -5,6 +5,7 @@
 2. understand `process` definition
 4. understand `workflow` definition
 5. understand piping between channels and processes
+6. understand and use pipeline `params`
 6. understand pipeline results caching
 
 ## 1. hello_world.nf
