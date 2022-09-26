@@ -18,14 +18,16 @@
    s2 = 'bar'               // String
    println s1 + '-' + s2    // String concatenation
    println "$s1-$s2"        // Variable interpolation
+   b = true                 // boolean
+   println( b ? 1 : 0 )     // ternary operator (if_else)
    ```
 * **Lists**
-   * groovy:
+   * Nextflow/groovy:
       ```groovy
       l = [1, 2, 3]
       l = l + 4
-      l = l.collect { it * 2 }
-      print(l)
+      l = l.collect { it * 2 } // <-- closure
+      println(l)
       ```
    * R:
       ```R
@@ -43,10 +45,10 @@
       ```
 * **Maps**
    * Equivalent to named lists in `R` or dicts in `python`
-   * groovy:
+   * Nextflow/groovy:
       ```groovy
       x = [foo: 1, bar: 2]
-      println x.foo
+      println(x.bar)
       x.baz = 3
       ```
    * R:
@@ -61,12 +63,82 @@
       print(x['bar'])
       x['baz'] = 3
       ```
-### **Exercise 1.1**
+* **Optional Function Arguments**
+   * In `R` and `python`, optional arguments are given to a function using `=`, e.g.:
+   ```R
+   myFunction(foo = bar)
+   ```
+   * In Nextflow/Groovy, optional arguments are provided using `:`, e.g.:
+   ```groovy
+   myFunction(foo: bar)
+   ```
+
+### 1.2 Nextflow Scripting
+* **Implicit Variables**:
+* **Files**:
+   * For creating `file` type variables, nextflow defines the function `file()`
+
+### **Exercise 1.1** ?
 * try out the above  groovy examples at https://groovyconsole.appspot.com/
+* ..?
 
-## 2. Channels
+## 2. Channels & Operators
+### Channel Creation:
+* Nextflow includes a number of ways to create channels
+* The most importand methods are:
+   * `channel.of(...)`: create a channel that emits each of the arguments one at a time.
+      ```nextflow
+      channel.of('A', 'B') | view
+      ```
+   * `channel.fromList(list)`: given a list, create a channel the emits each element of the list one at a time
+      ```nextflow
+      channel.fromList(['A', 'B']) | view
+      ```
+   * `channel.fromPath(path)`: Create a channel from a file path or glob pattern, emitting a `file` object.
+      ```nextflow
+      channel.fromPath('/path/to/sample.bam') | view
+      ```
+### **Operators**
+### Map
+* `map` is the most commonly used nextflow operater
+* Functionally similar to R's `lapply()` or Python's `map()`functions in R
+* The default variable name for a closure is `it`
+* for example:
+   ```nextflow
+   channel.of(1, 2, 3) |
+      map { it * 2 } | // "it" is the 
+      view()
+   ```
+   will print:
+   ```
+   2
+   4
+   6
+   ```
+### splitCsv
+* Convert a CSV (or TSV) file into a nextflow channel
+* Most often used on the output of `channel.fromPath()`, e.g.
+   ```nextflow
+   channel.fromPath("$projectDir/logos.csv") |
+        splitCsv(header: true) |
+        view
+   ```
+### More
+* Many more operators are availabe, see https://www.nextflow.io/docs/latest/operator.html
+### **Exercise 2.X**
+1. Look at [`concepts.nf`](concepts.nf) and [logos.csv](`logos.csv`)
+1. Run `concepts.nf` and observe the output
+   ```
+   nextflow run ~/wehi-nextflow-training/module_2/concepts.nf
+   ```
+1. Add the following map statement between `splitCsv` and `view` in [`concepts.nf`](concepts.nf) and run it again:
+   ```nextflow
+   map { [it.name, file(it.url)] } 
+   ```
 
-## 3. Operators
+
+ see the [channel factory documentation](https://www.nextflow.io/docs/latest/channel.html#channel-factory)
+
 
 ## 4. Processes
 
