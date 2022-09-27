@@ -9,7 +9,7 @@ include { download_fastqs } from './download'
 // include { samtools_sort   } from './processes'
 // include { bcftools_call   } from './processes'
 // include { bcftools_merge  } from './processes'
-include { plot_variants   } from './processes'
+// include { plot_variants   } from './processes'
 
 workflow {
 
