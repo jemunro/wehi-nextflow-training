@@ -66,22 +66,12 @@
       x['baz'] = 3
       ```
 
-* **Optional Function Arguments**
-   * In `R` and `python`, optional arguments are given to a function using `=`, e.g.:
-   ```R
-   myFunction(foo = bar)
-   ```
-   * In Nextflow/Groovy, optional arguments are provided using `:`, e.g.:
-   ```groovy
-   myFunction(foo: bar)
-   ```
 ### **Exercise 2.1**
 1. Try out some of above groovy examples using the groovy shell:
    ```
    module load java/1.8.0_92 groovy/4.0.0
    groovysh
    ```
-   or at https://groovyconsole.appspot.com/
 
 ### 1.2 Groovy Closures
 * Closures in groovy act as functions that can be passed to other functions
@@ -145,7 +135,6 @@
       ```groovy
       input = file('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
       ```
-
 
 ## 2. Channels & Operators
 ### **Channel Creation**:
@@ -248,45 +237,48 @@
 * similarly to inputs, outputs may be of type `val`, `path` or `tuple`
 * `path()` - when a `path` is declared as an output, after the process has run sucessfully nextflow will check that the path exists, and through an error if not.
 * `stdout` - stdout is a special output type that will return the standard output of the process run
-### **Directives**
-* Directives may be to configure how the process is executed
-* `cpus` - number of processes to use. If running as a job on SLURM this will determin how many cpus are requested.
-* `memory` - maximum amount of RAM to be used. Also passed on to SLURM.
-* `time` - maximum walltime for the process. Also passed on to SLURM.
-* `module` - run the process using this environment module (software)
-* `container` - ran the process using this container
-* Default values can be provided through config files
 
-##
+### **Exercise 2.4**
+1. Add the following processes to [concepts.nf](concepts.nf):
+   ```groovy
+   process download {
+      input:
+      tuple val(name), val(url)
+      output:
+      tuple val(name), path(output)
+      script:
+      output = file(url).name
+      """
+      wget $url
+      """
+   }
+   ```
+   ```groovy
+   process jp2a {
+      container 'talinx/jp2a' 
+      input:
+      tuple val(name), path(image)
+      output:
+      tuple val(name), stdout
+      script:
+      """
+      printf '\n'
+      jp2a $image --width=40 --color-depth=24
+      """
+   }
+   ```
+   `jp2a` (jpeg to ASCII) is a program that converts an image file into an ASCII (text) representation.
+2. Modify the `logos` channel created in 2.3.3 by piping into the processes `download` and then `jp2a` and then `view()` the result
+3. Using the joined `languages` and `logos` channels (as in 2.3.4), use the view operator with a closure to print the following text followed by the ASCII logo:
+   ```
+   Python was created in 1991 by Guido van Rossum:
+   <ASCII logo here>
+   ```
 
-
-```groovy
-process download {
-    input: tuple val(name), val(url)
-
-    output: tuple val(name), path(output)
-
-    script:
-    output = file(url).name
-    """
-    wget $url
-    """
-}
-```
-
-```groovy
-process jp2a {
-   container 'talinx/jp2a' 
-   input: tuple val(name), path(image)
-
-   output: tuple val(name), stdout
-
-   script:
-   """
-   jp2a $image --colors --width=35 --color-depth=24
-   """
-}
-```
 
 ## 4. Configutation
-* look at `nextflow.config` and ~/.nextflow/config
+* Look at [nextflow.config](nextflow.config)
+* When a file named `nextflow.config` is present in the same directory as a nextflow script, it provides project-level configuration to be used when running that script. 
+* Look at `~/.nextflow/config`. This provides system wide nextflow configuration, and is tailored to Milton/SLURM (it was created when you loaded the nextflow module).
+* Any settings provided by both the system wide `~/.nextflow/config` and project `nextflow.config` are overridden by hte project `nextflow.config` 
+* see https://www.nextflow.io/docs/latest/config.html
