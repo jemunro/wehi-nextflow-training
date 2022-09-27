@@ -3,7 +3,8 @@
 ## Setup
 1. Clone this repostiory to your home directory from vc7-shared
     ```
-    git clone ...
+    cd ~
+    git clone https://github.com/jemunro/wehi-nextflow-training.git
     ```
 2. Create a run directory on /vast/
     ```
@@ -17,6 +18,7 @@
     ```
     module load nextflow/22.04.5
     ```
+5. Join the VSCode live share in your browser
 
 ## [Module 1: Hello World](module_1/README.md)
 A brief introduction to the Nextflow language
