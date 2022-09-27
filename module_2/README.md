@@ -235,7 +235,7 @@
 * `tuple` - A tuple represents a list of inputs. There may be of either `val` or `path` types
 ### **Outputs**
 * similarly to inputs, outputs may be of type `val`, `path` or `tuple`
-* `path()` - when a `path` is declared as an output, after the process has run sucessfully nextflow will check that the path exists, and through an error if not.
+* `path()` - when a `path` is declared as an output, after the process has run sucessfully nextflow will check that the path exists, and throw an error if not.
 * `stdout` - stdout is a special output type that will return the standard output of the process run
 
 ### **Exercise 2.4**
