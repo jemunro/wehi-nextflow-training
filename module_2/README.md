@@ -263,7 +263,7 @@
       script:
       """
       printf '\n'
-      jp2a $image --width=40 --color-depth=24
+      jp2a $image --width=40 --color-depth=24 --fill --border
       """
    }
    ```
