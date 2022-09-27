@@ -21,26 +21,29 @@
    println( b ? 1 : 0 )     // ternary operator (if_else)
    ```
 * **Lists**
-   * Nextflow/groovy:
+   * Nextflow/groovy (0-based):
       ```groovy
       l = [1, 2, 3]
       l = l + 4
       l = l.collect { it * 2 } // <-- closure
       println(l)
+      println(l[0])
       ```
-   * R:
-      ```R
+   * R (1-based):
+      ```R 
       l = list(1, 2, 3)
       l = c(l, 4)
       l = lapply(l, function(x) x * 2)
       print(l)
+      print(l[1])
       ```
-   * python:
-      ```python
+   * python (0-based):
+      ```python 
       l = [1, 2, 3]
       l.append(4)
       l = map(lambda x: x * 2, l)
       print(l)
+      print(l[0])
       ```
 * **Maps**
    * Equivalent to named lists in `R` or dicts in `python`
@@ -80,8 +83,50 @@
    ```
    or at https://groovyconsole.appspot.com/
 
+### 1.2 Groovy Closures
+* Closures in groovy act as functions that can be passed to other functions
+* For example the `.collect()` function which is a property of lists in groovy
+   ```groovy
+   l = [1, 2, 3]
+   println( l.collect { it + 1 } )
+   ```
+* The default variable name in a closure is `it`, but this can be overridden:
+   ```groovy
+   l = [1, 2, 3]
+   l.collect { x -> x + 1 }
+   ```
+* In Groovy and Nextflow we often deal with nested lists
+   ```groovy
+   nested = [[1, 'A'], [2, 'B'], [3, 'C']]
+   ```
+* When we call `collect` on a nested list such as this, the variable `it` will be a list. For example here we are concatenating the elements of each inner list togeher:
+   ```groovy
+   nested.collect { "${it[0]}-${it[1]}" }
+   ```
+   ```
+   [1-A, 2-B, 3-C]
+   ```
+* We can also unpack the values of the list and assign them their own variables, which makes writing closures clearer
+   ```groovy
+   nested.collect { number, letter -> "$number-$letter" }
+   ```
+* If we wanted to keep the `number` and `letter` elements, we could instead do this:
+   ```groovy
+   nested.collect { number, letter -> [number, letter, "$number-$letter"] }
+   ```
+   ```
+   [[1, A, 1-A], [2, B, 2-B], [3, C, 3-C]]
+   ```
+* See https://www.nextflow.io/docs/latest/script.html#closures
 
-### 1.2 Nextflow Scripting
+### **Exercise 2.2**
+1. In the Groovy shell, define the variables `data` as bellow
+   ```groovy
+   data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
+   ```
+1. Using `collect`, transform data to have a new value which is the product of the first and second numeric values in each list, e.g. `['bar', 3, 4]` -> `['foo', 3, 4, 12]`
+
+### 1.3 Nextflow Scripting
 **Implicit Variables**:
 * A number of variables are available in all nextflow scripts:
 * `params`: map storing workflow parameters
@@ -102,7 +147,6 @@
       ```
 
 
-
 ## 2. Channels & Operators
 ### **Channel Creation**:
 * Nextflow includes a number of ways to create channels
@@ -121,8 +165,8 @@
 * See https://www.nextflow.io/docs/latest/channel.html#channel-factory
 ### **Operators**
 ### Map
-* `map` is the most commonly used nextflow operater
-* Functionally similar to R's `lapply()` or Python's `map()`functions in R
+* `map` is the most commonly used nextflow operater, and works the same as Groovy's `collect()` but applied to channels instead of lists.
+* Functionally similar to R's `lapply()` or Python's `map()` 
 * The default variable name for a closure is `it`
 * for example:
    ```groovy
@@ -136,12 +180,24 @@
    4
    6
    ```
+### View
+* `view` takes an input channel and prints the contents to the terminal
+* We can optionally provide a closure, similarly to `map {}`, which will instead print the value of applying the closure
+   ```groovy
+   channel.of(1, 2, 3) |  view { it * 2 } 
+   ```
+   will print:
+   ```
+   2
+   4
+   6
+   ```
 ### splitCsv
 * Convert a CSV (or TSV) file into a nextflow channel
 * Optional argument `skip` may be used to skip a number of lines (e.g. the header)
 * Most often used on the output of `channel.fromPath()`, e.g.
    ```groovy
-   channel.fromPath("$projectDir/logos.csv") |
+   channel.fromPath("$projectDir/languages.csv") |
         splitCsv(skip: 1) |
         view
    ```
@@ -171,10 +227,10 @@
    2  Y  2  5
    3  Z  3  6
    ```
-### More
-* Many more operators are availabe, see https://www.nextflow.io/docs/latest/operator.html
-### **Exercise 2.2**
 
+* Many more operators are availabe, see https://www.nextflow.io/docs/latest/operator.html
+
+### **Exercise 2.3**
 1. Open [concepts.nf](concepts.nf), [languages.csv](languages.csv) and [logos.csv](logos.csv)
 1. Run `concepts.nf` and observe the output
    ```
@@ -184,62 +240,53 @@
 1. Use the `join()` operator to join `languages` with `logos`, and print the result with `view()`
 
 ## 3. Processes
-### Inputs
-* **val**
-* **path**
-* **tuple**
-* **multiple inputs**
+### **Inputs**
+* `val()` - A val type input denotes a regular groovy variable. It could be a String, Integer, Boolean, double etc.
+* `path()` - A path represents an input file.
+* **tuple** - A tuple represents a list of inputs. There may be of either `val` or `path` types
+### **Outputs**
+* similarly to inputs, outputs may be of type `val`, `path` or `tuple`
+* `path()` - when a `path` is declared as an output, after the process has run sucessfully nextflow will check that the path exists, and through an error if not.
+* `stdout` - stdout is a special output type that will return the standard output of the process run
+### **Directives**
+* Directives may be to configure how the process is executed
+* `cpus` - number of processes to use. If running as a job on SLURM this will determin how many cpus are requested.
+* `memory` - maximum amount of RAM to be used. Also passed on to SLURM.
+* `time` - maximum walltime for the process. Also passed on to SLURM.
+* `module` - run the process using this environment module (software)
+* `container` - ran the process using this container
+* Default values can be provided through config files
+
+##
+
+
+```groovy
+process download {
+    input: tuple val(name), val(url)
+
+    output: tuple val(name), path(output)
+
+    script:
+    output = file(url).name
+    """
+    wget $url
+    """
+}
+```
 
 ```groovy
 process jp2a {
-   cpus 1                  //
-   memory '1 GB'           // (1) process directives
-   time '1 h'              // 
-   container 'talinx/jp2a' //https://hub.docker.com/r/talinx/jp2a
+   container 'talinx/jp2a' 
+   input: tuple val(name), path(image)
 
-   input:
-   tuple val(name), path(image) // (2) tuple input
-
-   output:
-   tuple val(name), stdout
+   output: tuple val(name), stdout
 
    script:
-   """ // (5) Multiline string script
-   jp2a https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png --colors --width=100
-   """ 
+   """
+   jp2a $image --colors --width=35 --color-depth=24
+   """
 }
 ```
 
-
-## 5. Configutation
+## 4. Configutation
 * look at `nextflow.config` and ~/.nextflow/config
-
-
-## 2. Processes
-```nextflow
-process sort_bam {
-   cpus 2                  //
-   memory '2 GB'           // (1) process directives
-   time '1 h'              // 
-   module 'samtools/1.15'  //
-
-   input:
-   tuple val(sample), path(unsorted_bam) // (2) tuple input
-
-   output:
-   tuple val(sample), path(sorted_bam), path(index) // (3) tuple output
-
-   script:
-   sorted_bam = sample + '.sorted.bam'  // (4) defining task variables
-   index = sorted_bam + '.bai'
-   """ // (5) Multiline string script
-   samtools sort $unsorted_bam -o $sorted_bam \\
-      --output-fmt BAM \\
-      --threads 2 \\
-      --write-index
-   """ 
-}
-```
-
-### **Exercise XX**
-* Write a process using a different aligner
