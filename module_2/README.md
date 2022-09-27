@@ -232,7 +232,7 @@
 ### **Inputs**
 * `val()` - A val type input denotes a regular groovy variable. It could be a String, Integer, Boolean, double etc.
 * `path()` - A path represents an input file.
-* **tuple** - A tuple represents a list of inputs. There may be of either `val` or `path` types
+* `tuple` - A tuple represents a list of inputs. There may be of either `val` or `path` types
 ### **Outputs**
 * similarly to inputs, outputs may be of type `val`, `path` or `tuple`
 * `path()` - when a `path` is declared as an output, after the process has run sucessfully nextflow will check that the path exists, and through an error if not.
