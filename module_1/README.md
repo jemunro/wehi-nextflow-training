@@ -85,4 +85,4 @@
    ```
 
 ### **Exercise 1.4**
-1. Experiment by running `hello_world.nf` with and without `-resume`, and with different parameters `--greeting` and `--question`. When are chached tasks used?
+1. Experiment by running `hello_world.nf` with and without `-resume`, and with different parameters `--greeting` and `--question`. When are cached tasks used?

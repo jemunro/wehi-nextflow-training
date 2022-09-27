@@ -235,7 +235,7 @@
 * `tuple` - A tuple represents a list of inputs. There may be of either `val` or `path` types
 ### **Outputs**
 * similarly to inputs, outputs may be of type `val`, `path` or `tuple`
-* `path()` - when a `path` is declared as an output, after the process has run sucessfully nextflow will check that the path exists, and through an error if not.
+* `path()` - when a `path` is declared as an output, after the process has run sucessfully nextflow will check that the path exists, and throw an error if not.
 * `stdout` - stdout is a special output type that will return the standard output of the process run
 
 ### **Exercise 2.4**
@@ -280,5 +280,5 @@
 * Look at [nextflow.config](nextflow.config)
 * When a file named `nextflow.config` is present in the same directory as a nextflow script, it provides project-level configuration to be used when running that script. 
 * Look at `~/.nextflow/config`. This provides system wide nextflow configuration, and is tailored to Milton/SLURM (it was created when you loaded the nextflow module).
-* Any settings provided by both the system wide `~/.nextflow/config` and project `nextflow.config` are overridden by hte project `nextflow.config` 
+* Any settings provided by both the system wide `~/.nextflow/config` and project `nextflow.config` are overridden by the project `nextflow.config` 
 * see https://www.nextflow.io/docs/latest/config.html
