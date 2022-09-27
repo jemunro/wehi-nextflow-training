@@ -21,21 +21,21 @@
    println( b ? 1 : 0 )     // ternary operator (if_else)
    ```
 * **Lists**
-   * Nextflow/groovy (0-based):
+   * Nextflow/groovy:
       ```groovy
       l = [1, 2, 3]
       l = l + 4
       l = l.collect { it * 2 } // <-- closure
       println(l)
-      println(l[0])
+      println(l[0]) // (0-based index)
       ```
-   * R (1-based):
+   * R :
       ```R 
       l = list(1, 2, 3)
       l = c(l, 4)
       l = lapply(l, function(x) x * 2)
       print(l)
-      print(l[1])
+      print(l[1]) # (1-based index)
       ```
    * python (0-based):
       ```python 
@@ -43,7 +43,7 @@
       l.append(4)
       l = map(lambda x: x * 2, l)
       print(l)
-      print(l[0])
+      print(l[0]) # (0-based index)
       ```
 * **Maps**
    * Equivalent to named lists in `R` or dicts in `python`
