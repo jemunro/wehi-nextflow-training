@@ -114,7 +114,15 @@
    ```groovy
    data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
    ```
-1. Using `collect`, transform data to have a new value which is the product of the first and second numeric values in each list, e.g. `['bar', 3, 4]` -> `['bar', 3, 4, 12]`
+   Using `collect`, transform data to have a new value which is the product of the first and second numeric values in each list, e.g. `['bar', 3, 4]` -> `['bar', 3, 4, 12]`
+   <details>
+   <summary>Solution</summary>
+
+   ```groovy
+   data.collect { s, n1, n2 -> [s, n1, n2, n1 * n2] }
+   ```
+   </details>
+
 
 ### 1.3 Nextflow Scripting
 **Implicit Variables**:
