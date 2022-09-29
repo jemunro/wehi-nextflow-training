@@ -94,7 +94,7 @@ process bcftools_merge {
     //TODO: provide bcftools through a module or conda
 
     input:
-    path(bcfs)
+    path(bcf)
 
     output:
     //TODO: add output
@@ -102,7 +102,7 @@ process bcftools_merge {
     script:
     merged_vcf = 'merged.vcf.gz'
     """
-    bcftools merge --no-index --missing-to-ref -Oz $vcfs > $merged_vcf
+    bcftools merge --no-index --missing-to-ref -Oz $bcf > $merged_vcf
     """
 }
 
