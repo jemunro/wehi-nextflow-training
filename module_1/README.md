@@ -1,12 +1,12 @@
 # Module 1: Hello World
 
 ## Learning Objectives
-1. run and modify a Nextflow script
-2. understand `process` definition
-4. understand `workflow` definition
-5. understand piping between channels and processes
-6. understand and use pipeline `params`
-6. understand pipeline results caching
+1. Run and modify a Nextflow script
+1. Understand `process` definition
+1. Understand `workflow` definition
+1. Understand piping between channels and processes
+1. Understand and use pipeline `params`
+1. Understand pipeline results caching
 
 ## 1. hello_world.nf
 
@@ -56,6 +56,34 @@
 1. Add the above process definition to `hello_world.nf`
 2. Add `ask_question |` to the workflow definition between `greet |` and `view`
 3. Run `hello_world.nf`
+   <details>
+   <summary>Solution</summary>
+
+   ```nextflow
+   audience = ['world', 'WEHI']
+
+   process greet {
+      input: val(x)
+      output: stdout
+      script: "echo -n Hello $x!"
+   }
+
+   question = 'how are you?'
+
+   process ask_question {
+      input: val(x)
+      output: stdout
+      script: "echo -n $x, $question"
+   }
+
+   workflow {
+      channel.fromList(audience) |
+         greet |
+         ask_question |
+         view
+   }
+   ```
+   </details>
 
 ## 3. Workflow Parameters
 * Nextflow workflows contain a special variable `params` which is a Map (equivalent to a named list in `R` or a dict in `python`)
@@ -76,6 +104,34 @@
 ### **Exercise 1.3**
 1. Convert `greeting` to an input paramter in `hello_world.nf` as in the example above. Run `hello world.nf`, providing `--greeting` as a command line arguemnt.
 2. Also convert `question` to an input paramter. Run `hello world.nf`, providing both `--greeting` and `--question` as a command line arguments.
+   <details>
+   <summary>Solution</summary>
+
+   ```nextflow
+   params.greeting = 'Hello'
+
+   process greet {
+      input: val(x)
+      output: stdout
+      script: "echo -n $params.greeting $x!"
+   }
+
+   params.question = 'how are you?'
+
+   process ask_question {
+      input: val(x)
+      output: stdout
+      script: "echo -n $x, $params.question"
+   }
+
+   workflow {
+      channel.fromList(audience) |
+         greet |
+         ask_question |
+         view
+   }
+   ```
+   </details>
 
 ## 4. Workflow Caching
 * Nextflow provides a mechanism to reuse results from previously run workflows, potentially saving costly processes from being recomputed.
