@@ -102,7 +102,7 @@ process bcftools_merge {
     script:
     merged_vcf = 'merged.vcf.gz'
     """
-    bcftools merge --no-index --missing-to-ref -Oz $vcfs > $merged_vcf
+    bcftools merge --no-index --missing-to-ref -Oz $bcfs > $merged_vcf
     """
 }
 
