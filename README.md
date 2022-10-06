@@ -23,11 +23,14 @@
 ## [Module 1: Hello World](module_1/README.md)
 A brief introduction to the Nextflow language
 
-## [Module 2: Nextflow Concepts](module_2/README.md)
-Core concepts for developing Nextflow workflows
+## [Module 2: Nextflow Scripting](module_2/README.md)
+Basics of writing Nextflow Scripts
 
-## [Module 3: NGS Variant Calling Pipeline](module_3/README.md)
-An example pipeline calling SARS-Cov-2 variants using bwa, samtools, bcftools and then visualising with R
+## [Module 3: Processes and Configuration](module_3/README.md)
+Configuring Nextflow processes and execution
+
+## [Module 4: NGS Variant Calling Pipeline](module_4/README.md)
+Work though an example pipeline calling SARS-Cov-2 variants using bwa, samtools, bcftools and then visualising with R
 
 
 ## Additional Resources

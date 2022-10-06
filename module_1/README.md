@@ -86,7 +86,7 @@
    </details>
 
 ## 3. Workflow Parameters
-* Nextflow workflows contain a special variable `params` which is a Map (equivalent to a named list in `R` or a dict in `python`)
+* Nextflow workflows contain a special variable `params` which is a 'map' (equivalent to a named list in `R` or a dict in `python`)
 * We can set default values for `params` in the Nextflow script, e.g.:
    ```nextflow
    params.greeting = 'Hello'
@@ -97,10 +97,11 @@
       script: "echo -n $params.greeting $x!"
    }
    ```
-* We can override parameters with command line arguments, e.g.
+* We can then override parameters with command line arguments, e.g.:
    ```
    nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf --greeting 'Hey'
    ```
+* See https://www.nextflow.io/docs/latest/cli.html#pipeline-parameters
 ### **Exercise 1.3**
 1. Convert `greeting` to an input paramter in `hello_world.nf` as in the example above. Run `hello world.nf`, providing `--greeting` as a command line arguemnt.
 2. Also convert `question` to an input paramter. Run `hello world.nf`, providing both `--greeting` and `--question` as a command line arguments.
@@ -133,12 +134,3 @@
    ```
    </details>
 
-## 4. Workflow Caching
-* Nextflow provides a mechanism to reuse results from previously run workflows, potentially saving costly processes from being recomputed.
-* To use this feature, provide the `-resume` argument at the command line:
-   ```
-   nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf -resume
-   ```
-
-### **Exercise 1.4**
-1. Experiment by running `hello_world.nf` with and without `-resume`, and with different parameters `--greeting` and `--question`. When are cached tasks used?

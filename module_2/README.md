@@ -1,12 +1,11 @@
-# Module 2: Nextflow Concepts
+# Module 2: Nextflow Scripting
 
 ### Learning Objectives
 1. Nextflow/Groovy scripting basics
 2. Understand channel creation
 3. Use operators to transform channels
 
-## 1. Scripting
-### 1.1 Groovy Scripting
+## 1. Groovy Scripting
 * Much of Nextflow scripting is done using Groovy
    ```groovy
    x = 1                    // integer
@@ -73,7 +72,7 @@
    groovysh
    ```
 
-### 1.2 Groovy Closures
+### 1.1 Groovy Closures
 * Closures in groovy act as functions that can be passed to other functions
 * For example the `.collect()` function which is a property of lists in groovy
    ```groovy
@@ -124,7 +123,7 @@
    </details>
 
 
-### 1.3 Nextflow Scripting
+## 2. Nextflow Scripting
 **Implicit Variables**:
 * A number of variables are available in all nextflow scripts:
 * `params`: map storing workflow parameters
@@ -144,7 +143,7 @@
       input = file('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
       ```
 
-## 2. Channels & Operators
+## 2.1 Channels & Operators
 ### **Channel Creation**:
 * Nextflow includes a number of ways to create channels
 * `channel.of(...)`: create a channel that emits each of the arguments one at a time.
@@ -236,7 +235,7 @@
 1. Create a channel named `logos` from [logos.csv](logos.csv) as is done with `languages`
 1. Use the `join()` operator to join `languages` with `logos`, and print the result with `view()`
 
-## 3. Processes
+## 2.2 Processes
 ### **Inputs**
 * `val()` - A val type input denotes a regular groovy variable. It could be a String, Integer, Boolean, double etc.
 * `path()` - A path represents an input file.
@@ -283,10 +282,12 @@
    <ASCII logo here>
    ```
 
+## 4. Workflow Caching (TBD)
+* Nextflow provides a mechanism to reuse results from previously run workflows, potentially saving costly processes from being recomputed.
+* To use this feature, provide the `-resume` argument at the command line:
+   ```
+   nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf -resume
+   ```
 
-## 4. Configutation
-* Look at [nextflow.config](nextflow.config)
-* When a file named `nextflow.config` is present in the same directory as a nextflow script, it provides project-level configuration to be used when running that script. 
-* Look at `~/.nextflow/config`. This provides system wide nextflow configuration, and is tailored to Milton/SLURM (it was created when you loaded the nextflow module).
-* Any settings provided by both the system wide `~/.nextflow/config` and project `nextflow.config` are overridden by the project `nextflow.config` 
-* see https://www.nextflow.io/docs/latest/config.html
+### **Exercise 1.4**
+1. Experiment by running `hello_world.nf` with and without `-resume`, and with different parameters `--greeting` and `--question`. When are cached tasks used?
