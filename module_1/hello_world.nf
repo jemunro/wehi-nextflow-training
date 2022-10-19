@@ -1,7 +1,7 @@
 
 audience = ['world']
 
-process greet {
+process Greet {
     input: val(x)
     output: stdout
     script: "echo -n Hello $x!"
@@ -9,6 +9,6 @@ process greet {
 
 workflow {
     channel.fromList(audience) |
-        greet |
+        Greet |
         view
 }

@@ -6,32 +6,33 @@
 1. Understand `workflow` definition
 1. Understand piping between channels and processes
 1. Understand and use pipeline `params`
-1. Understand pipeline results caching
 
 ## 1. hello_world.nf
 
 * [hello_world.nf](hello_world.nf) is a simple Nextflow script.
-   ```nextflow
-   audience = ['world']            // (1) variable assignment
+   ```groovy
+   // -------- (1) variable assignment -------- //
+   audience = ['world'] 
 
-   // -------- (2) process definition --------
-   process greet {
+   // -------- (2) process definition -------- //
+   process Greet {
       input: val(x) 
       output: stdout
-      script: "echo -n Hello $x!"  // (3) variable interpolation
+      script: "echo -n Hello $x!"  // [i] String interpolation
    }
 
-   // -------- (4) workflow definition --------
+   // -------- (3) workflow definition -------- //
    workflow {
-      channel.fromList(audience) | // (5) Channel creation
-        greet | 
-        view  
+      channel.fromList(audience) | // Channel creation
+        Greet |                    // Process call
+        view                       // Operator call
    }
    ```
-1. We can assign variables as usual
-2. Nextflow processes define units of computations carried out by other software. The `script:` section defines a bash script to be run.
-3. Variable interpolation: `$x` is replaced with the value ("world")
-4. Workflows define connections (Channels) bewteen `processes` and `operators`.
+1. Assigning a list of Strings to the variable `audience`
+2. Nextflow processes define units of computations carried out by other software. The `script:` section defines a bash script to be run.  
+   i. String interpolation: `$x` is replaced with the value of the variable `x`
+3. Workflows define connections bewteen `channels`, `processes` and `operators`. The pipe operator ("`|`") is used to take the left side and pass it as input to the right side.
+
 ### **Exercise 1.1**
 1. Run `hello_world.nf`
    ```
@@ -46,15 +47,15 @@
    ```nextflow
    question = 'how are you?'
 
-   process ask_question {
+   process AskQuestion {
       input: val(x)
       output: stdout
       script: "echo -n $x, $question"
    }
    ```
 ### **Exercise 1.2**
-1. Add the above process definition to `hello_world.nf`
-2. Add `ask_question |` to the workflow definition between `greet |` and `view`
+1. Add the `AskQuestion` above process definition to `hello_world.nf`
+2. Add `AskQuestion |` to the workflow definition between `Greet |` and `view`
 3. Run `hello_world.nf`
    <details>
    <summary>Solution</summary>
@@ -62,7 +63,7 @@
    ```nextflow
    audience = ['world', 'WEHI']
 
-   process greet {
+   process Greet {
       input: val(x)
       output: stdout
       script: "echo -n Hello $x!"
@@ -70,7 +71,7 @@
 
    question = 'how are you?'
 
-   process ask_question {
+   process AskQuestion {
       input: val(x)
       output: stdout
       script: "echo -n $x, $question"
@@ -78,8 +79,8 @@
 
    workflow {
       channel.fromList(audience) |
-         greet |
-         ask_question |
+         Greet |
+         AskQuestion |
          view
    }
    ```
@@ -91,7 +92,7 @@
    ```nextflow
    params.greeting = 'Hello'
 
-   process greet {
+   process Greet {
       input: val(x)
       output: stdout
       script: "echo -n $params.greeting $x!"
@@ -111,7 +112,7 @@
    ```nextflow
    params.greeting = 'Hello'
 
-   process greet {
+   process Greet {
       input: val(x)
       output: stdout
       script: "echo -n $params.greeting $x!"
@@ -119,7 +120,7 @@
 
    params.question = 'how are you?'
 
-   process ask_question {
+   process AskQuestion {
       input: val(x)
       output: stdout
       script: "echo -n $x, $params.question"
@@ -127,8 +128,8 @@
 
    workflow {
       channel.fromList(audience) |
-         greet |
-         ask_question |
+         Greet |
+         AskQuestion |
          view
    }
    ```
