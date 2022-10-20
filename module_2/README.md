@@ -5,22 +5,50 @@
 2. Understand channel creation
 3. Use operators to transform channels
 
-## 1. Groovy Scripting
-* Much of Nextflow scripting is done using Groovy
+## 2.1 Groovy Scripting
+* Much of Nextflow scripting is done using the Groovy language
+* **Numeric Operations**
    ```groovy
-   x = 1                    // integer
-   y = 1.5                  // float
-   println(x + y)           // print statement, addition
-   println x * y            // print statement, optional parenthesis, multiplication
-   s1 = 'foo'               // String
-   s2 = 'bar'               // String
-   println s1 + '-' + s2    // String concatenation
-   println "$s1-$s2"        // Variable interpolation
-   b = true                 // boolean
-   println( b ? 1 : 0 )     // ternary operator (if_else)
+   x = 2                      // integer variable
+   y = 2.5                    // float variable 
+   z = 0.99                   // float variable 
+   assert x * y == 5          // assertion, throw error if not true
+   assert Math.round(z) == 1  // round to nearest integer
+   assert [x, y].max() == 2.5 // maximum 
    ```
+* **String Operations**
+   ```groovy
+   s1 = 'foo'                 // String variable
+   s2 = 'bar'                 // String variable
+   println(s1)                // print value to standard output
+   c1 = s1 + '-' + s2         // String concatenation
+   c2 = "$s1-$s2"             // String interpolation
+   assert c1 == c2  
+   ```
+
+* **Logic Operations**
+   ```groovy
+   isValid = true            // boolean variable
+   // ------------ if else statement ------------ //
+   if (isValid) {           
+      println("valid")
+   } else {
+      println("not valid")
+   }
+   // ------------ ternary operator ------------ //
+   isValid ? println("valid") : println("not valid")
+   ```
+* See example code snippits in Groovy and Python: https://programming-idioms.org/cheatsheet/Groovy/Python
+
+### **Exercise 2.1**
+1. Try out some of above Groovy examples using the groovy shell:
+   ```
+   module load java/1.8.0_92 groovy/4.0.0
+   groovysh
+   ```
+## 2.1.1 Lists & Maps
 * **Lists**
-   * Nextflow/groovy:
+   * Nextflow/Groovy:
       ```groovy
       l = [1, 2, 3]
       l = l + 4
@@ -65,14 +93,7 @@
       x['baz'] = 3
       ```
 
-### **Exercise 2.1**
-1. Try out some of above groovy examples using the groovy shell:
-   ```
-   module load java/1.8.0_92 groovy/4.0.0
-   groovysh
-   ```
-
-### 1.1 Groovy Closures
+## 2.1.2 Closures
 * Closures in groovy act as functions that can be passed to other functions
 * For example the `.collect()` function which is a property of lists in groovy
    ```groovy
@@ -99,7 +120,7 @@
    ```groovy
    nested.collect { number, letter -> "$number-$letter" }
    ```
-* If we wanted to keep the `number` and `letter` elements, we could instead do this:
+* If we wanted to add to the inner list, we could instead do this:
    ```groovy
    nested.collect { number, letter -> [number, letter, "$number-$letter"] }
    ```
@@ -108,8 +129,8 @@
    ```
 * See https://www.nextflow.io/docs/latest/script.html#closures
 
-### **Exercise 2.2**
-1. In the Groovy shell, define the variables `data` as below
+### **Exercise 2.1.2**
+1. In the Groovy shell, define the variable `data` as below
    ```groovy
    data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
    ```
@@ -123,12 +144,11 @@
    </details>
 
 
-## 2. Nextflow Scripting
+## 2.2 Nextflow Scripting
 **Implicit Variables**:
 * A number of variables are available in all nextflow scripts:
 * `params`: map storing workflow parameters
-* `launchDir`: The directory the nextflow script was run from
-* `projectDir`: The directory containing the main nextflow script
+* `projectDir`: A string variable of the directory containing the nextflow script being run. Useful for accessing workflow resource files.
 * See https://www.nextflow.io/docs/latest/script.html#implicit-variables
 
 **Files**:
@@ -143,23 +163,54 @@
       input = file('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
       ```
 
-## 2.1 Channels & Operators
-### **Channel Creation**:
+## 2.2.1 Channels
 * Nextflow includes a number of ways to create channels
-* `channel.of(...)`: create a channel that emits each of the arguments one at a time.
-   ```groovy
-   channel.of('A', 'B') | view
+* `channel.of(...)` 
+  * create a channel that emits each of the arguments one at a time.
+      ```groovy
+      channel.of('A', 'B', 'C')
+      ```
+* `channel.fromList(list)` 
+   * given a list, create a channel the emits each element of the list one at a time
+      ```groovy
+      list = ['A', 'B', 'C']
+      channel.fromList(list)
+      ```
+* `channel.fromPath(path)`: 
+  * Create a channel from a file path, emitting a `file` variable.
+      ```groovy
+      channel.fromPath('/path/to/sample.bam')
+      ```
+  * Optional argument `checkIfExists` will throw an error if file does not exists
+      ```groovy
+      channel.fromPath('/path/to/sample.bam', checkIfExists: true)
+/home/users/allstaff/munro.j/pipelines/wehi-nextflow-training/examples      ```
+   * Files may be located on the web and will downloaded when needed:
+       ```groovy
+      channel.fromPath('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
+      ```
+   * See https://www.nextflow.io/docs/latest/channel.html#channel-factory for more ways to create channels
+ ### **Exercise 2.1.1**
+1. Open [languages.nf](languages.nf), [details.csv](details.csv) and [logos.csv](logos.csv)
+1. Create a channel `logos` from [logos.csv](logos.csv) using `channel.fromPath()` and call `view()` on it
+1. Run [languages.nf](languages.nf)
    ```
-* `channel.fromList(list)`: given a list, create a channel the emits each element of the list one at a time
-   ```groovy
-   channel.fromList(['A', 'B']) | view
+   nextflow run ~/wehi-nextflow-training/module_2/languages.nf
    ```
-* `channel.fromPath(path)`: Create a channel from a file path or glob pattern, emitting a `file` object.
-   ```groovy
-   channel.fromPath('/path/to/sample.bam') | view
+   <details>
+   <summary>Solution</summary>
+
+   ```nextflow
+   workflow {
+      details = Channel.fromPath("$projectDir/details.csv", checkIfExists: true)
+      details.view()
+      logos = Channel.fromPath("$projectDir/logos.csv", checkIfExists: true)
+      logos.view()
+   }
    ```
-* See https://www.nextflow.io/docs/latest/channel.html#channel-factory
-### **Operators**
+   </details>
+
+## 2.2.2 Operators
 ### Map
 * `map` is the most commonly used nextflow operater, and works the same as Groovy's `collect()` but applied to channels instead of lists.
 * Functionally similar to R's `lapply()` or Python's `map()` 
@@ -215,7 +266,7 @@
                       V2 = c( 1,   2,   3,   7))
    right = data.frame(V1 = c('Z', 'Y', 'X'),
                       V3 = c( 6,   5,   4))
-   left %>% inner_join(right)
+   left %>% join(right) %>% View()
    ```
    ```
      V1 V2 V3
@@ -226,13 +277,8 @@
 
 * Many more operators are availabe, see https://www.nextflow.io/docs/latest/operator.html
 
-### **Exercise 2.3**
-1. Open [concepts.nf](concepts.nf), [languages.csv](languages.csv) and [logos.csv](logos.csv)
-1. Run `concepts.nf` and observe the output
-   ```
-   nextflow run ~/wehi-nextflow-training/module_2/concepts.nf
-   ```
-1. Create a channel named `logos` from [logos.csv](logos.csv) as is done with `languages`
+### **Exercise 2.2.2**
+1. Open [concepts.nf](concepts.nf)
 1. Use the `join()` operator to join `languages` with `logos`, and print the result with `view()`
 
 ## 2.2 Processes
@@ -270,7 +316,7 @@
       script:
       """
       printf '\n'
-      jp2a $image --width=40 --color-depth=24 --fill --border
+      jp2a $image --width=40 --colors --fill --border
       """
    }
    ```
