@@ -6,8 +6,9 @@
 1. Understand `workflow` definition
 1. Understand piping between channels and processes
 1. Understand and use pipeline `params`
+1. Understand and use workflow caching (`-resume`)
 
-## 1. hello_world.nf
+## 1.1 hello_world.nf
 
 * [hello_world.nf](hello_world.nf) is a simple Nextflow script.
    ```groovy
@@ -31,7 +32,7 @@
 1. Assigning a list of Strings to the variable `audience`
 2. Nextflow processes define units of computations carried out by other software. The `script:` section defines a bash script to be run.  
    i. String interpolation: `$x` is replaced with the value of the variable `x`
-3. Workflows define connections bewteen `channels`, `processes` and `operators`. The pipe operator ("`|`") is used to take the left side and pass it as input to the right side.
+3. Workflows define connections bewteen `channels`, `processes` and `operators`. The pipe operator ("`|`") is used to take the left side and pass it as input to the right side (similarly to bash).
 
 ### **Exercise 1.1**
 1. Run `hello_world.nf`
@@ -41,7 +42,7 @@
 2. Add additional items to the list `audience` to be a list of values (e.g. `audience = ['world',  'WEHI']`) and run `hello_world.nf`? What happens?
 
 
-## 2. Connecting processes
+## 1.2 Connecting processes
 * We can connect processes together using the pipe operator. Here we have added a new process `ask_question` that takes the output of `greet` and adds a question to it.
 
    ```nextflow
@@ -86,7 +87,7 @@
    ```
    </details>
 
-## 3. Workflow Parameters
+## 1.3 Workflow Parameters
 * Nextflow workflows contain a special variable `params` which is a 'map' (equivalent to a named list in `R` or a dict in `python`)
 * We can set default values for `params` in the Nextflow script, e.g.:
    ```nextflow
@@ -135,3 +136,14 @@
    ```
    </details>
 
+## 1.4 Workflow Caching
+* Nextflow provides a mechanism to reuse results from previously run workflows, potentially saving costly processes from being recomputed.
+* This works by creating a unique hash from all process inputs, and only running the process if a matching hash is not present in the work directory. If a match if found the existing outputs are used.
+* To use this feature, provide the `-resume` argument at the command line:
+   ```
+   nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf -resume
+   ```
+* It is recommended to always use this option
+
+### **Exercise 1.4**
+1. Experiment by running `hello_world.nf` with and without `-resume`, and with different parameters `--greeting` and `--question`.

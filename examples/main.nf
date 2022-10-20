@@ -1,34 +1,26 @@
-
-process stringUpper {
+process ToUpper {
     input: val(x)
     output: tuple val(x), stdout
     script: "echo -n $x | tr a-z A-Z"
 }
 
-process stringReverse {
+process Reverse {
     input: val(x)
     output: tuple val(x), stdout
     script: "echo -n $x | rev"
 }
 
-process stringConcat {
+process Concat {
     input: tuple val(x), val(y), val(z)
     output: stdout
-    script: "echo -n $x-$y-$z"
+    script: "echo -n $x $y $z"
 }
 
 workflow {
     input = channel.of('foo', 'bar', 'baz')
-    
-    input |
-        toList() | 
-        view { "input: $it" }
-
-    stringUpper(input) |
-        join(stringReverse(input)) |
-        stringConcat |
-        toSortedList() |
-        view { "output: $it" }
+    upper = ToUpper(input)
+    reveresed = Reverse(input)
+    output = Concat(upper.join(reveresed))
+    output.view()
 }
-
 
