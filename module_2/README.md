@@ -281,15 +281,7 @@
 1. Open [concepts.nf](concepts.nf)
 1. Use the `join()` operator to join `languages` with `logos`, and print the result with `view()`
 
-## 2.2 Processes
-### **Inputs**
-* `val()` - A val type input denotes a regular groovy variable. It could be a String, Integer, Boolean, double etc.
-* `path()` - A path represents an input file.
-* `tuple` - A tuple represents a list of inputs. There may be of either `val` or `path` types
-### **Outputs**
-* similarly to inputs, outputs may be of type `val`, `path` or `tuple`
-* `path()` - when a `path` is declared as an output, after the process has run sucessfully nextflow will check that the path exists, and throw an error if not.
-* `stdout` - stdout is a special output type that will return the standard output of the process run
+
 
 ### **Exercise 2.4**
 1. Add the following processes to [concepts.nf](concepts.nf):
@@ -328,12 +320,3 @@
    <ASCII logo here>
    ```
 
-## 4. Workflow Caching (TBD)
-* Nextflow provides a mechanism to reuse results from previously run workflows, potentially saving costly processes from being recomputed.
-* To use this feature, provide the `-resume` argument at the command line:
-   ```
-   nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf -resume
-   ```
-
-### **Exercise 1.4**
-1. Experiment by running `hello_world.nf` with and without `-resume`, and with different parameters `--greeting` and `--question`. When are cached tasks used?
