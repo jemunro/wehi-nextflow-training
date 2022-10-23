@@ -45,7 +45,7 @@
    process Greet {
       input: val(x)
       output: stdout
-      script: "echo -n $params.greeting $x!"
+      script: "echo -n $params.greeting $x"
    }
    ```
 * We can then override parameters with command line arguments, e.g.:
@@ -72,7 +72,7 @@ Here will add another process to run on the output of `Greet`
    ```
 1. Add call to process `AskQuestion` on the output of Greet, e.g. `AskQuestion(Greet.out)`
 1. Remove `Greet.out.view()` and add `AskQuestion.out.view()` to the end of the workflow definition to view the output of `AskQuestion`
-1. Run `hello_world.nf setting the parameter question, e.g.:
+1. Run `hello_world.nf` with the parameter `--question`, e.g.:
    ```
    nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf --question 'what time is it?'
    ```
