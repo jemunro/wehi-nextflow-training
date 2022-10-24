@@ -67,7 +67,7 @@
 * See https://www.nextflow.io/docs/latest/process.html#directives for all available directives
 
 ### **Exercise 2.2**
-1. Add the following directives to `INDEX` to specify the cpu and memory resources required by you process.
+1. Add the following directives to `INDEX` to specify the cpu and memory resources required by the process.
     ```nextflow
     memory '2 GB'
     cpus 1
@@ -99,11 +99,10 @@
 
 ## 2.3 Procecss inputs and outputs
 * Open [rna_seq_2.nf]('rna_seq_2.nf') and take a look.
-* Here we have added a process `QUANTIFICATION`. This process takes the RNA-seq data and counts the reads belong to each transcrpit in the transcriptome using salmon:
+* Here we have added a process `QUANTIFICATION`. This process takes the RNA-seq data and counts the reads originating from each transcrpit in the transcriptome:
     ```nextflow
     process QUANTIFICATION {
         module 'salmon/1.9.0'
-        executor 'slurm'
         memory '2 GB'
         cpus 2
         tag "$sample_id"
@@ -177,7 +176,7 @@
 
 ## 2.6 Publishing Outputs
 * Open [rna_seq_3.nf]('rna_seq_3.nf') and take a look.
-* Here we have added a process `PLOT_TPM`. This process is an R script takes RNA seq quantification results and creates a plot:
+* Here we have added a process `PLOT_TPM`. This process is an R script that takes RNA seq quantification results and creates a plot:
     ```nextflow
     process PLOT_TPM {
         container 'rocker/tidyverse:4.1.3'
@@ -210,6 +209,11 @@
     ```
 * The `publishDir` directives specifies that output files from this process should be copied to the folder 'results'
 * The operator `collect()` is used to combine all the outputs in `quant_ch` into a single input for `PLOT_TPM`
+    ```nextflow
+    quant_ch = QUANTIFICATION(index_ch, read_pairs_ch)
+    
+    PLOT_TPM(quant_ch.collect())
+    ```
 
 ### **Exercise 2.6**
 1. Open at [nextflow.config](nextflow.config) and change `process.executor` from 'local' to 'slurm'. This will direct jobs to be submitted to the slurm queue.

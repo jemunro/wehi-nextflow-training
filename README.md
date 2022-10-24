@@ -32,8 +32,6 @@ You can connect using vc7-shared as the remote host, for more details see [remot
     ```
     module load nextflow/22.04.5
     ```
-5. Open the VSCode liveshare link in your browser
-
 
 ## [Module 1: Hello World](module_1/README.md)
 A brief introduction to the Nextflow language.
