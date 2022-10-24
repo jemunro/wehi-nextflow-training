@@ -1,5 +1,5 @@
 
-process Greet {
+process GREET {
     input: val(x)
     output: stdout
     script: "echo -n Hello $x"
@@ -7,6 +7,6 @@ process Greet {
 
 workflow {
     input_ch = Channel.of('world')
-    Greet(input_ch)
-    Greet.out.view()
+    greet_ch = GREET(input_ch)
+    greet_ch.view()
 }

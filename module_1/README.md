@@ -9,10 +9,10 @@
 
 ## 1.1 hello_world.nf
 
-* [hello_world.nf](hello_world.nf) is a simple Nextflow script.
+* [hello_world.nf](hello_world.nf) is a simple Nextflow script
    ```nextflow
    // -------- (1) process definition -------- //
-   process Greet {
+   process GREET {
       input: val(x) 
       output: stdout
       script: "echo -n Hello $x"  // (2) String interpolation
@@ -21,8 +21,8 @@
    // -------- (3) workflow definition -------- //
    workflow {
       input_ch = Channel.of('world') // create input channel
-      Greet(input_ch)  // run process create on input channel
-      Greet.out.view() // view the output channel of process Greet
+      greet_ch = GREET(input_ch)     // run process GREET
+      greet_ch.view()                // view the output of GREET
    }
    ```
 1. Nextflow processes define units of computations carried out by other software. The `script:` section defines a bash script to be run.  
@@ -42,7 +42,7 @@
    ```nextflow
    params.greeting = 'Hello'
 
-   process Greet {
+   process GREET {
       input: val(x)
       output: stdout
       script: "echo -n $params.greeting $x"
@@ -58,20 +58,20 @@
 2.  Run `hello_world.nf`, providing `--greeting` as a command line arguemnt.
 
 ## 1.3 Adding Processes
-Here will add another process to run on the output of `Greet`
+Here will add another process `ASK_QUESTION` to run on the output of `GREET`. 
 ### **Exercise 1.3**
 1. Add the parameter and process definition below to `hello_world.nf`
    ```nextflow
    params.question = 'how are you?'
 
-   process AskQuestion {
+   process ASK_QUESTION {
       input: val(x)
       output: stdout
       script: "echo -n $x, $question"
    }
    ```
-1. Add call to process `AskQuestion` on the output of Greet, e.g. `AskQuestion(Greet.out)`
-1. Remove `Greet.out.view()` and add `AskQuestion.out.view()` to the end of the workflow definition to view the output of `AskQuestion`
+1. Create a channel `ask_question_ch` by running `ASK_QUESTION` on `greet_ch`
+1. Replace `greet_ch.view()` with `ask_question_ch.view()` to view the output of `ASK_QUESTION`
 1. Run `hello_world.nf` with the parameter `--question`, e.g.:
    ```
    nextflow run ~/wehi-nextflow-training/module_1/hello_world.nf --question 'what time is it?'
@@ -84,13 +84,13 @@ Here will add another process to run on the output of `Greet`
    params.greeting = 'Hello'
    params.question = 'how are you?'
 
-   process Greet {
+   process GREET {
       input: val(x)
       output: stdout
       script: "echo -n $params.greeting $x"
    }
 
-   process AskQuestion {
+   process ASK_QUESTION {
       input: val(x)
       output: stdout
       script: "echo -n $x, $params.question"
@@ -98,9 +98,9 @@ Here will add another process to run on the output of `Greet`
 
    workflow {
       input_ch = Channel.of('world', 'WEHI')
-      Greet(input_ch)
-      AskQuestion(Greet.out)
-      AskQuestion.out.view()
+      greet_ch = GREET(input_ch)
+      ask_question_ch = ASK_QUESTION(greet_ch)
+      ask_question_ch.view()
    }
    ```
    </details>
