@@ -1,5 +1,5 @@
 
-process download {
+process DOWNLOAD {
     cpus 1
     memory '1 GB'
     time '1 h'
@@ -18,7 +18,7 @@ process download {
     """
 }
 
-process download_fastqs {
+process DOWNLOAD_FASTQS {
     cpus 1
     memory '1 GB'
     time '1 h'
