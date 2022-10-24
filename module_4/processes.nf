@@ -1,5 +1,5 @@
 
-process index_ref {
+process INDEX_REF {
     cpus 1
     memory '1 GB'
     time '1 h'
@@ -21,7 +21,7 @@ process index_ref {
     """
 }
 
-process bwa_mem_align {
+process BWA_MEM_ALIGN {
     // TODO: set cpus    https://www.nextflow.io/docs/latest/process.html#cpus
     // TODO: set memory  https://www.nextflow.io/docs/latest/process.html#memory
     // TODO: set time    https://www.nextflow.io/docs/latest/process.html#time
@@ -43,7 +43,7 @@ process bwa_mem_align {
     """
 }
 
-process samtools_sort {
+process SAMTOOLS_SORT {
     cpus 2
     memory '2 GB'
     time '2 h'
@@ -66,7 +66,7 @@ process samtools_sort {
 }
 
 
-process bcftools_call {
+process BCFTOOLS_CALL {
     cpus 2
     memory '2 GB'
     time '2 h'
@@ -87,7 +87,7 @@ process bcftools_call {
 }
 
 
-process bcftools_merge {
+process BCFTOOLS_MERGE {
     cpus 2
     memory '2 GB'
     time '2 h'
@@ -106,7 +106,7 @@ process bcftools_merge {
     """
 }
 
-process plot_variants {
+process PLOT_VARIANTS {
     cpus 1
     memory '2 GB'
     time '1 h'
@@ -124,6 +124,6 @@ process plot_variants {
     script:
     plot = 'plot.png'
     """
-    plot_variants.R $vcf $metadata $plot
+    PLOT_VARIANTS.R $vcf $metadata $plot
     """
 }
