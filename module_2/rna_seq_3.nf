@@ -1,11 +1,11 @@
 
 params.transcriptome_file = "$projectDir/data/transcriptome.fa.gz"
-// params.reads = "$projectDir/data/gut_{1,2}.fq.gz"
 params.reads = "$projectDir/data/*_{1,2}.fq.gz"
-params.outdir = "results"
 
 process INDEX {
-    module 'salmon/1.9.0'
+    container 'quay.io/biocontainers/salmon:1.9.0--h7e5ed60_1'
+    memory '2 GB'
+    cpus 1
 
     input:
     path transcriptome
@@ -20,11 +20,11 @@ process INDEX {
 }
 
 process QUANTIFICATION {
-    tag "$sample_id"
-    // module 'salmon/1.9.0'
     container 'quay.io/biocontainers/salmon:1.9.0--h7e5ed60_1'
-
-
+    memory '2 GB'
+    cpus 2
+    tag "$sample_id"
+    
     input:
     path salmon_index
     tuple val(sample_id), path(reads)
@@ -42,6 +42,7 @@ process QUANTIFICATION {
 
 process PLOT_TPM {
     container 'rocker/tidyverse:4.1.3'
+    publishDir "results", mode: 'copy'
 
     input:
     path quant_results
@@ -71,13 +72,13 @@ process PLOT_TPM {
 
 workflow {
 
+    transcriptome_file = file(params.transcriptome_file, checkIfExists: true)
+    
+    index_ch = INDEX(transcriptome_file)
+
     read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
 
-    // index_ch = INDEX(params.transcriptome_file)
-
-    // quant_ch = QUANTIFICATION(index_ch, read_pairs_ch)
-
-    // plot_ch = PLOT_TPM(quant_ch.collect())
-
-    // plot_ch.view()
+    quant_ch = QUANTIFICATION(index_ch, read_pairs_ch)
+    
+    quant_ch.view()
 }
