@@ -80,5 +80,12 @@ workflow {
 
     quant_ch = QUANTIFICATION(index_ch, read_pairs_ch)
     
-    quant_ch.view()
+    PLOT_TPM(quant_ch.collect())
+}
+
+workflow.onComplete {
+    log.info( 
+        workflow.success ? 
+        "Pipeline Complete!\nOutput: $launchDir/results/TPM.png\n" : 
+        "Pipeline Failed.\n" )
 }

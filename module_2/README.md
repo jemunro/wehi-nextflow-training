@@ -1,6 +1,6 @@
 ## Module 2: Processes and Software Dependencies
-Here we will work though an exmple RNA-seq quantification using [Salmon](https://combine-lab.github.io/salmon/)
-This is module is adapted from https://training.seqera.io/#_simple_rna_seq_pipeline
+* Here we will work though an exmple RNA-seq quantification using [Salmon](https://combine-lab.github.io/salmon/)  
+* This is module is adapted from https://training.seqera.io/#_simple_rna_seq_pipeline
 
 ### Learning Objectives
 1. Work on a practical example of a nextflow pipeline
@@ -69,7 +69,6 @@ This is module is adapted from https://training.seqera.io/#_simple_rna_seq_pipel
 ### **Exercise 2.2**
 1. Add the following directives to `INDEX` to specify the cpu and memory resources required by you process.
     ```nextflow
-    executor 'slurm'
     memory '2 GB'
     cpus 1
     ```
@@ -100,8 +99,7 @@ This is module is adapted from https://training.seqera.io/#_simple_rna_seq_pipel
 
 ## 2.3 Procecss inputs and outputs
 * Open [rna_seq_2.nf]('rna_seq_2.nf') and take a look.
-* Here we have added a process `QUANTIFICATION`. This process takes the RNA-seq data and counts the reads belong to each transcrpit in the transcriptome using salmon.
-
+* Here we have added a process `QUANTIFICATION`. This process takes the RNA-seq data and counts the reads belong to each transcrpit in the transcriptome using salmon:
     ```nextflow
     process QUANTIFICATION {
         module 'salmon/1.9.0'
@@ -131,9 +129,10 @@ This is module is adapted from https://training.seqera.io/#_simple_rna_seq_pipel
     * `stdout` - stdout is a special output type that will return the standard output of the process run
     * `tuple` - A tuple represents a collection of inputs/out. These may be of either `val`, `path` or `stdout` types
 * Note that `QUANTIFICATION` defines two inputs channels, one for the salmon index and one for the reads for each sample
+* `Channel.fromFilePairs()` is a special method designed to handle paired file inputs from NGS sequencing
 
 ## 2.4 Software Containers
-* One of the most powerful features of Nextflow is it's support for software containers (Docker, Singularity, etc.) for process execution.
+* One of the most powerful features of Nextflow is it's support for software containers (Docker, Singularity, etc.).
 * Using containers will improve the reproducibility and portability of your pipelines.
 * Containers can be specified using the `container` directive.
 * You can find pre-made containers for popular bioinformatics software through [Bioconda](https://bioconda.github.io/)
@@ -141,13 +140,12 @@ This is module is adapted from https://training.seqera.io/#_simple_rna_seq_pipel
 ### **Exercise 2.4**
 1. Visit https://bioconda.github.io/recipes/salmon/README.html. Here we see Salmon is available in a Docker container at "quay.io/biocontainers/salmon:<tag>". If we visit the "salmon/tags" link we can find that the latest available tag is "1.9.0--h7e5ed60_1"
 1. Replace the directive `module 'salmon/1.9.0'` with `container 'quay.io/biocontainers/salmon:1.9.0--h7e5ed60_1'` in the processes `INDEX` and `QUANTIFICATION` in [rna_seq_2.nf]('rna_seq_2.nf')
-1. Run [rna_seq_2.nf]('rna_seq_2.nf') using the containers
+1. Run [rna_seq_2.nf]('rna_seq_2.nf')
     ```
     nextflow run ~/wehi-nextflow-training/module_2/rna_seq_2.nf
     ```
 
 ## 2.5 Configurtaion
-
 * Look at `~/.nextflow/config`. This provides system wide nextflow configuration, and is tailored to Milton (it was created when you first loaded the nextflow module).
     ```nextflow
     process {
@@ -172,19 +170,57 @@ This is module is adapted from https://training.seqera.io/#_simple_rna_seq_pipel
     docker.enabled = false
     ```
 * When a file named `nextflow.config` is present in the same directory as a nextflow script, it provides project-level configuration to be used when running that script. 
-* Any settings provided by both the system wide `~/.nextflow/config` and project `nextflow.config` are overridden by the project `nextflow.config` 
+* Any settings provided by both the system wide `~/.nextflow/config` and project `nextflow.config` are overridden by the project `nextflow.config`
+* Open at [nextflow.config](nextflow.config) and take a configuration at the settings. The default 'slurm' executor is overwritten to use the 'local' executor.
 * see https://www.nextflow.io/docs/latest/config.html
 
-### **Exercise 2.5**
-1. Open at [nextflow.config](nextflow.config) and change `process.executor` from 'local' to 'slurm'. This will cause jobs to be submitted to the slurm queue.
-1. Run [rna_seq_2.nf]('rna_seq_2.nf') again, observing that the slurm executor is used.
+
+## 2.6 Publishing Outputs
+* Open [rna_seq_3.nf]('rna_seq_3.nf') and take a look.
+* Here we have added a process `PLOT_TPM`. This process is an R script takes RNA seq quantification results and creates a plot:
+    ```nextflow
+    process PLOT_TPM {
+        container 'rocker/tidyverse:4.1.3'
+        publishDir "results", mode: 'copy'
+
+        input:
+        path quant_results
+
+        output:
+        path 'TPM.png'
+
+        script:
+        """
+        #!/usr/bin/env Rscript
+
+        library(tidyverse)
+
+        data.frame(filename = list.files(pattern='.sf')) %>% 
+            mutate(tissue = str_remove(basename(filename), '.sf')) %>% 
+            mutate(data = map(filename, read_tsv, col_types = cols())) %>% 
+            unnest(data) %>% 
+            select(tissue, transcript = Name, TPM) %>% 
+            ggplot(aes(transcript, TPM, fill = tissue)) +
+            geom_col(position = 'dodge') +
+            coord_flip()
+
+        ggsave('TPM.png', width = 6, height = 4)
+        """
+    }
     ```
-    nextflow run ~/wehi-nextflow-training/module_2/rna_seq_2.nf
+* The `publishDir` directives specifies that output files from this process should be copied to the folder 'results'
+* The operator `collect()` is used to combine all the outputs in `quant_ch` into a single input for `PLOT_TPM`
+
+### **Exercise 2.6**
+1. Open at [nextflow.config](nextflow.config) and change `process.executor` from 'local' to 'slurm'. This will direct jobs to be submitted to the slurm queue.
+1. Run [rna_seq_3.nf]('rna_seq_3.nf') and observe the output
+    ```
+    nextflow run ~/wehi-nextflow-training/module_2/rna_seq_3.nf -resume
     ```
 
-## 2.6 Execution Log
+## 2.7 Execution Log
 * Nextflow executions logs can be generated after a workflow has run, see https://www.nextflow.io/docs/latest/tracing.html#execution-log
 
 ### **Exercise 2.6**
 1. Run `nextflow log` to list all previous executions, and note the `RUN NAME` of the most recent execution
-2. Run `nextflow log <RUN NAME> -f name,workdir,native_id,status,exit` replacing `<RUN NAME>` with the name from 1. This will list all jobs run in the previous execturion.
+2. Run `nextflow log <RUN NAME> -f name,workdir,native_id,status,exit` replacing `<RUN NAME>` with the name from 1. This will list all jobs run in the previous execution.
