@@ -1,10 +1,9 @@
 
 process INDEX_REF {
-    cpus 1
-    memory '1 GB'
-    time '1 h'
-    // TODO: provide bwa and samtools through modules
-    // see https://www.nextflow.io/docs/latest/process.html#module
+    // TODO: set cpus to 1               - https://www.nextflow.io/docs/latest/process.html#cpus
+    // TODO: set memory to 1 Gigabyte   - https://www.nextflow.io/docs/latest/process.html#memory
+    // TODO: set time to 1 hours        - https://www.nextflow.io/docs/latest/process.html#time
+    // TODO: provide bwa and samtools through modules - https://www.nextflow.io/docs/latest/process.html#module
 
     input:
     path(ref_fasta_gz)
@@ -22,9 +21,9 @@ process INDEX_REF {
 }
 
 process BWA_MEM_ALIGN {
-    // TODO: set cpus    https://www.nextflow.io/docs/latest/process.html#cpus
-    // TODO: set memory  https://www.nextflow.io/docs/latest/process.html#memory
-    // TODO: set time    https://www.nextflow.io/docs/latest/process.html#time
+    // TODO: set cpus to 2                - https://www.nextflow.io/docs/latest/process.html#cpus
+    // TODO: set memory to 4 Gigabytes    - https://www.nextflow.io/docs/latest/process.html#memory
+    // TODO: set time to 2 hours          - https://www.nextflow.io/docs/latest/process.html#time
     // TODO: provide bwa and samtools through modules
     tag { sample }
 
