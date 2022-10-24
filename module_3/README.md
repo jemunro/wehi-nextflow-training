@@ -1,7 +1,7 @@
 # Module 3: Nextflow Scripting
 
 ### Learning Objectives
-1. Nextflow/Groovy scripting basics
+1. Groovy scripting basics
 2. Understand channel creation
 3. Use operators to transform channels
 
@@ -46,7 +46,7 @@
    module load java/1.8.0_92 groovy/4.0.0
    groovysh
    ```
-## 2.1.1 Lists & Maps
+## 2.2 Lists & Maps
 * **Lists**
    * Nextflow/Groovy:
       ```groovy
@@ -93,7 +93,7 @@
       x['baz'] = 3
       ```
 
-## 2.1.2 Closures
+## 2.3 Closures
 * Closures in groovy act as functions that can be passed to other functions
 * For example the `.collect()` function which is a property of lists in groovy
    ```groovy
@@ -129,7 +129,7 @@
    ```
 * See https://www.nextflow.io/docs/latest/script.html#closures
 
-### **Exercise 2.1.2**
+### **Exercise 2.3**
 1. In the Groovy shell, define the variable `data` as below
    ```groovy
    data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
@@ -144,7 +144,7 @@
    </details>
 
 
-## 2.2 Nextflow Scripting
+## 2.4 Nextflow Scripting
 **Implicit Variables**:
 * A number of variables are available in all nextflow scripts:
 * `params`: map storing workflow parameters
@@ -163,7 +163,7 @@
       input = file('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
       ```
 
-## 2.2.1 Channels
+## 2.5 Channels
 * Nextflow includes a number of ways to create channels
 * `channel.of(...)` 
   * create a channel that emits each of the arguments one at a time.
@@ -190,7 +190,7 @@
       channel.fromPath('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
       ```
    * See https://www.nextflow.io/docs/latest/channel.html#channel-factory for more ways to create channels
- ### **Exercise 2.1.1**
+ ### **Exercise 2.5**
 1. Open [languages.nf](languages.nf), [details.csv](details.csv) and [logos.csv](logos.csv)
 1. Create a channel `logos` from [logos.csv](logos.csv) using `channel.fromPath()` and call `view()` on it
 1. Run [languages.nf](languages.nf)
@@ -210,7 +210,7 @@
    ```
    </details>
 
-## 2.2.2 Operators
+## 2.6 Operators
 ### Map
 * `map` is the most commonly used nextflow operater, and works the same as Groovy's `collect()` but applied to channels instead of lists.
 * Functionally similar to R's `lapply()` or Python's `map()` 
@@ -277,46 +277,8 @@
 
 * Many more operators are availabe, see https://www.nextflow.io/docs/latest/operator.html
 
-### **Exercise 2.2.2**
+### **Exercise 2.6**
 1. Open [concepts.nf](concepts.nf)
 1. Use the `join()` operator to join `languages` with `logos`, and print the result with `view()`
 
-
-
-### **Exercise 2.4**
-1. Add the following processes to [concepts.nf](concepts.nf):
-   ```groovy
-   process download {
-      input:
-      tuple val(name), val(url)
-      output:
-      tuple val(name), path(output)
-      script:
-      output = file(url).name
-      """
-      wget $url
-      """
-   }
-   ```
-   ```groovy
-   process jp2a {
-      container 'talinx/jp2a' 
-      input:
-      tuple val(name), path(image)
-      output:
-      tuple val(name), stdout
-      script:
-      """
-      printf '\n'
-      jp2a $image --width=40 --colors --fill --border
-      """
-   }
-   ```
-   `jp2a` (jpeg to ASCII) is a program that converts an image file into an ASCII (text) representation.
-2. Modify the `logos` channel created in 2.3.3 by piping into the processes `download` and then `jp2a` and then `view()` the result
-3. Using the joined `languages` and `logos` channels (as in 2.3.4), use the view operator with a closure to print the following text followed by the ASCII logo:
-   ```
-   Python was created in 1991 by Guido van Rossum:
-   <ASCII logo here>
-   ```
 
