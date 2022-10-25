@@ -14,7 +14,6 @@
 * This pipeline has been configured to run on the slurm queue
 * The Singularity `cacheDir` is set so you can use pre-downloaded container images, otherwise Nextflow would download them automatically
 
-
 ## **Exercise 4**
 * The pipeline in [main.nf](main.nf) is incomplete. 
 * We will work through completing the "TODO" sections of each process until the pipeline is complete
@@ -76,6 +75,13 @@
 1. Complete process `PLOT_VARIANTS` in [modules/plot_variants.nf](modules/plot_variants.nf)
 1. Uncomment the corresponding lines in [main.nf](main.nf) referencing `PLOT_VARIANTS`
 1. Run [main.nf](main.nf)
+    ```
+    nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
+    ```
+
+### **Exercise 4.8**
+1. Remove the operator `.take(3)` from channel `fastq_url_ch`
+1. Run [main.nf](main.nf), now on the entire dataset
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
     ```
