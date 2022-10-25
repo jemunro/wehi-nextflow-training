@@ -7,20 +7,17 @@ process TOUPPER {
 process REVERSE {
     input: val(x)
     output: tuple val(x), stdout
-    script: "echo -n $x | rev"
-}
-
-process CONCAT {
-    input: tuple val(x), val(y), val(z)
-    output: stdout
-    script: "echo -n $x $y $z"
+    script: "echo $x | rev | tr -d '\\n'"
 }
 
 workflow {
-    input = channel.of('foo', 'bar', 'baz')
-    upper = TOUPPER(input)
-    reveresed = REVERSE(input)
-    output = CONCAT(upper.join(reveresed))
-    output.view()
+    input_ch = channel.of('foo')
+    upper_ch = TOUPPER(input_ch)
+    reverese_ch = REVERSE(input_ch)
+    output_ch = upper_ch.join(reverese_ch)
+    output_ch.view()
 }
+
+
+
 
