@@ -16,6 +16,6 @@ process PLOT_VARIANTS {
     script:
     plot = 'plot.png'
     """
-    PLOT_VARIANTS.R $vcf $metadata $plot
+    plot_variants.R $vcf $metadata $plot
     """
 }

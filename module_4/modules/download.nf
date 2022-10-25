@@ -1,9 +1,8 @@
 
-process DOWNLOAD {
+process DOWNLOAD_REF {
     cpus 1
     memory '1 GB'
     time '1 h'
-    executor 'local'
 
     input:
     val(url)
@@ -22,7 +21,7 @@ process DOWNLOAD_FASTQS {
     cpus 1
     memory '1 GB'
     time '1 h'
-    executor 'local'
+    tag "$sample"
 
     input:
     tuple val(sample), val(url1), val(url2)

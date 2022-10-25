@@ -4,7 +4,7 @@ process SAMTOOLS_SORT {
     // TODO: set memory to 2 Gigabytes
     // TODO: set time to 1 hours
     // TODO: tag with sample name
-    // TODO: provide bwa and samtools through modules
+    // TODO: provide samtools through a module
 
     input:
     tuple val(sample), path(input_bam)

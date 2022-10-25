@@ -16,7 +16,7 @@ process BWA_MEM_ALIGN {
     script:
     bam = sample + '.bam'
     """
-    bwa mem -M -t 2 -R '@RG\\tID:$sample\\tSM:$sample' $ref_fasta $fastq1 $fastq2 |
+    bwa mem -M -t $task.cpus -R '@RG\\tID:$sample\\tSM:$sample' $ref_fasta $fastq1 $fastq2 |
         samtools view -b > $bam
     """
 }

@@ -17,9 +17,6 @@
 ## **Exercise 4**
 * The pipeline in [main.nf](main.nf) is incomplete. 
 * We will work through completing the "TODO" sections of each process until the pipeline is complete
-* Note the use of the operator `.take(3)` on the channel `fastq_url_ch`.
-    * This will take just the first 3 items from the channel
-    * This is very useful to the purpose of testing and developing a pipeline
 
 ### **Exercise 4.1**
 1. Run [main.nf](main.nf)
@@ -34,6 +31,33 @@
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
     ```
+    <details>
+    <summary>Solution</summary>
+
+    ```nextflow
+    process INDEX_REF {
+        cpus 1
+        memory '1 GB'
+        time '1 h'
+        module 'bwa'
+        module 'samtools'
+
+        input:
+        path(ref_fasta_gz)
+
+        output:
+        tuple path('ref.fasta'), path("ref.fasta.*")
+
+        script:
+        """
+        gzip -cd $ref_fasta_gz > ref.fasta
+        samtools faidx ref.fasta
+        bwa index ref.fasta
+        """
+    }
+    ```
+    </details>
+    
 
 ### **Exercise 4.3**
 1. Complete process `BWA_MEM_ALIGN` in [modules/bwa_mem_align.nf](modules/bwa_mem_align.nf)
@@ -42,6 +66,34 @@
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
     ```
+    <details>
+    <summary>Solution</summary>
+
+    ```nextflow
+    process BWA_MEM_ALIGN {
+        cpus 2
+        memory '2 GB'
+        time '2 h'
+        module 'bwa'
+        tag "$sample"
+        module 'samtools'
+
+        input:
+        tuple val(sample), path(fastq1), path(fastq2)
+        tuple path(ref_fasta), path(ref_indices)
+
+        output:
+        tuple val(sample), path(bam)
+
+        script:
+        bam = sample + '.bam'
+        """
+        bwa mem -M -t $task.cpus -R '@RG\\tID:$sample\\tSM:$sample' $ref_fasta $fastq1 $fastq2 |
+            samtools view -b > $bam
+        """
+    }
+    ```
+    </details>
 
 ### **Exercise 4.4**
 1. Complete process `SAMTOOLS_SORT` in [modules/samtools_sort.nf](modules/samtools_sort.nf)
@@ -50,6 +102,33 @@
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
     ```
+    <details>
+    <summary>Solution</summary>
+
+    ```nextflow
+    process SAMTOOLS_SORT {
+        cpus 2
+        memory '2 GB'
+        time '1 h'
+        module 'samtools'
+        tag "$sample"
+
+        input:
+        tuple val(sample), path(input_bam)
+
+        output:
+        tuple val(sample), path(sorted_bam), path(bam_index)
+
+        script:
+        sorted_bam = sample + '.sorted.bam'
+        bam_index = sorted_bam + '.bai'
+        """
+        samtools sort --threads $task.cpus $input_bam > $sorted_bam
+        samtools index $sorted_bam
+        """
+    }
+    ```
+    </details>
 
 ### **Exercise 4.5**
 1. Complete process `BCFTOOLS_CALL` in [modules/bcftools_call.nf](modules/bcftools_call.nf)
@@ -58,6 +137,33 @@
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
     ```
+    <details>
+    <summary>Solution</summary>
+
+    ```nextflow
+    process BCFTOOLS_CALL {
+        cpus 2
+        memory '2 GB'
+        time '1 h'
+        container "quay.io/biocontainers/bcftools:1.16--hfe4b78e_1"
+        tag "$sample"
+
+        input:
+        tuple val(sample), path(sorted_bam), path(bam_index)
+        tuple path(ref_fasta), path(ref_indices)
+
+        output:
+        path bcf
+
+        script:
+        bcf =  sample + '.bcf'
+        """
+        bcftools mpileup -Ou -f $ref_fasta $sorted_bam | bcftools call -mv -Ob -o $bcf
+        """
+    }
+    ```
+    </details>
+
 
 ### **Exercise 4.6**
 1. Complete process `BCFTOOLS_MERGE` in [modules/bcftools_merge.nf](modules/bcftools_merge.nf)
@@ -66,6 +172,30 @@
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
     ```
+    <details>
+    <summary>Solution</summary>
+
+    ```nextflow
+    process BCFTOOLS_MERGE {
+        cpus 2
+        memory '2 GB'
+        time '1 h'
+        container "quay.io/biocontainers/bcftools:1.16--hfe4b78e_1"
+
+        input:
+        path(bcfs)
+
+        output:
+        path merged_vcf
+        
+        script:
+        merged_vcf = 'merged.vcf.gz'
+        """
+        bcftools merge --threads $task.cpus --no-index --missing-to-ref -Oz $bcfs > $merged_vcf
+        """
+    }
+    ```
+    </details>
 
 ## Project scripts
 * Scripts placed in the bin directory may be called from a process
@@ -74,15 +204,34 @@
 ### **Exercise 4.7**
 1. Complete process `PLOT_VARIANTS` in [modules/plot_variants.nf](modules/plot_variants.nf)
 1. Uncomment the corresponding lines in [main.nf](main.nf) referencing `PLOT_VARIANTS`
-1. Run [main.nf](main.nf)
-    ```
-    nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
-    ```
-
-### **Exercise 4.8**
-1. Remove the operator `.take(3)` from channel `fastq_url_ch`
 1. Uncomment the `workflow.onComplete {...}` section in [main.nf](main.nf)
-1. Run [main.nf](main.nf), now on the entire dataset
+1. Run [main.nf](main.nf) and look at the output plot
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
     ```
+    <details>
+    <summary>Solution</summary>
+
+    ```nextflow
+    process PLOT_VARIANTS {
+        cpus 1
+        memory '2 GB'
+        time '1 h'
+        container 'library://jemunro/training/tidyverse-pheatmap'
+        publishDir "results", mode: 'copy'
+
+        input:
+        path(vcf)
+        path(metadata)
+
+        output:
+        path(plot)
+
+        script:
+        plot = 'plot.png'
+        """
+        plot_variants.R $vcf $metadata $plot
+        """
+    }
+    ```
+    </details>
