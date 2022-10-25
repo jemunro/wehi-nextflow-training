@@ -37,7 +37,7 @@ variant_matrix <-
   as.matrix()
 
 
-png(plot_name, width=6, height=4, units="in", res=1200)
+png(plot_name, width = 6, height = 4, units = "in", res=1200)
 
 pheatmap(variant_matrix,
          color = viridisLite::cividis(2),
@@ -47,7 +47,7 @@ pheatmap(variant_matrix,
          clustering_method = 'average',
          main = 'Victorian SARS-CoV-2 Varaints 2020',
          border_color = NA,
-         legend_breaks = c(0,1),
+         legend_breaks = c(0, 1),
          angle_col = 45)
 
 dev.off()
