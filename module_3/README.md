@@ -22,13 +22,15 @@
    s2 = 'bar'                 // String variable
    println(s1)                // print value to standard output
    c1 = s1 + '-' + s2         // String concatenation
-   c2 = "$s1-$s2"             // String interpolation
+   c2 = "$s1-$s2"             // String interpolation of variables
    assert c1 == c2  
+   s3 = "1 + 2 = ${1 + 2}"    // Strining interpolation of closure
+   assert s3 == "1 + 2 = 3"
    ```
 
 * **Logic Operations**
    ```groovy
-   isValid = true            // boolean variable
+   isValid = true // boolean variable
    // ------------ if else statement ------------ //
    if (isValid) {           
       println("valid")
@@ -40,12 +42,6 @@
    ```
 * See example code snippits in Groovy and Python: https://programming-idioms.org/cheatsheet/Groovy/Python
 
-### **Exercise 2.1**
-1. Try out some of above Groovy examples using the groovy shell:
-   ```
-   module load java/1.8.0_92 groovy/4.0.0
-   groovysh
-   ```
 ## 2.2 Lists & Maps
 * **Lists**
    * Nextflow/Groovy:
@@ -92,6 +88,12 @@
       print(x['bar'])
       x['baz'] = 3
       ```
+### **Exercise 2.2**
+1. Try out some of above Groovy examples using the groovy shell:
+   ```
+   module load java/1.8.0_92 groovy/4.0.0
+   groovysh
+   ```
 
 ## 2.3 Closures
 * Closures in groovy act as functions that can be passed to other functions
@@ -134,7 +136,22 @@
    ```groovy
    data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
    ```
-   Using `collect`, transform data to have a new value which is the product of the first and second numeric values in each list, e.g. `['bar', 3, 4]` -> `['bar', 3, 4, 12]`
+   Using `collect`, transform the data to the following list:  
+   `["foo: 3", "bar: 12", "baz: 30"]`  
+   (the number is equal to the product of the numbers in the list)
+   <details>
+   <summary>Solution</summary>
+
+   ```groovy
+   data.collect { s, n1, n2 -> "$s: ${n1*n2}" } 
+   ```
+   </details>
+1. In the Groovy shell, define the variable `data` as below
+   ```groovy
+   data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
+   ```
+   Using `collect`, transform data to the following nested list:  
+   `[['foo', 1, 2, 2], ['bar', 3, 4, 12], ['baz', 5, 6, 30]]`
    <details>
    <summary>Solution</summary>
 
@@ -171,13 +188,13 @@
       channel.of('A', 'B', 'C')
       ```
 * `channel.fromList(list)` 
-   * given a list, create a channel the emits each element of the list one at a time
+   * given a list, create a channel that emits each element of the list one at a time
       ```groovy
       list = ['A', 'B', 'C']
       channel.fromList(list)
       ```
 * `channel.fromPath(path)`: 
-  * Create a channel from a file path, emitting a `file` variable.
+  * Create a channel from a file path, emitting a `file` variable. Functions similarly to the `file()` method but returns a channel.
       ```groovy
       channel.fromPath('/path/to/sample.bam')
       ```
@@ -191,21 +208,26 @@
       ```
    * See https://www.nextflow.io/docs/latest/channel.html#channel-factory for more ways to create channels
  ### **Exercise 2.5**
-1. Open [languages.nf](languages.nf), [details.csv](details.csv) and [logos.csv](logos.csv)
-1. Create a channel `logos` from [logos.csv](logos.csv) using `channel.fromPath()` and call `view()` on it
+1. Open [languages.nf](languages.nf) and look at the CSV files in [data](data)
+1. Create and `view()` channels `authors_ch` and `homepage_ch` in the same way as `year_created_ch`
 1. Run [languages.nf](languages.nf)
    ```
-   nextflow run ~/wehi-nextflow-training/module_2/languages.nf
+   nextflow run ~/wehi-nextflow-training/module_3/languages.nf
    ```
    <details>
    <summary>Solution</summary>
 
    ```nextflow
    workflow {
-      details = Channel.fromPath("$projectDir/details.csv", checkIfExists: true)
-      details.view()
-      logos = Channel.fromPath("$projectDir/logos.csv", checkIfExists: true)
-      logos.view()
+
+      year_created_ch = Channel.fromPath("$projectDir/data/year_created.csv", checkIfExists: true)
+      year_created_ch.view()
+
+      authors_ch = Channel.fromPath("$projectDir/data/authors.csv", checkIfExists: true)
+      authors_ch.view()
+
+      homepage_ch = Channel.fromPath("$projectDir/data/homepage.csv", checkIfExists: true)
+      homepage_ch.view()
    }
    ```
    </details>
@@ -217,9 +239,7 @@
 * The default variable name for a closure is `it`
 * for example:
    ```groovy
-   channel.of(1, 2, 3) |
-      map { it * 2 } |  
-      view()
+   channel.of(1, 2, 3).map { it * 2 }.view()
    ```
    will print:
    ```
@@ -229,32 +249,73 @@
    ```
 ### View
 * `view` takes an input channel and prints the contents to the terminal
-* We can optionally provide a closure, similarly to `map {}`, which will instead print the value of applying the closure
+* We can optionally provide a closure, similarly to `map`, which will instead print the value of applying the closure
    ```groovy
-   channel.of(1, 2, 3) |  view { it * 2 } 
+   channel.of(1, 2, 3).view { x -> "$x * 2 = ${x * 2}" } 
    ```
    will print:
    ```
-   2
-   4
-   6
+   1 * 2 = 2
+   2 * 2 = 4
+   3 * 2 = 6
    ```
 ### splitCsv
 * Convert a CSV (or TSV) file into a nextflow channel
 * Optional argument `skip` may be used to skip a number of lines (e.g. the header)
 * Most often used on the output of `channel.fromPath()`, e.g.
    ```groovy
-   channel.fromPath("$projectDir/languages.csv") |
-        splitCsv(skip: 1) |
-        view
+   channel.fromPath("$projectDir/data/year_created.csv")
+      .splitCsv(skip: 1)
+      .view()
    ```
+   will print:
+   ```
+   [Python, 1991]
+   [R, 1993]
+   [Nextflow, 2013]
+   ```
+ ### **Exercise 2.6.1**
+1. Update all channels in [languages.nf](languages.nf) with splitCsv as follows:
+   ```nextflow
+      workflow {
+         year_created_ch = Channel
+            .fromPath("$projectDir/data/year_created.csv", checkIfExists: true)
+            .splitCsv(skip: 1)
+         year_created_ch.view()
+      }
+   ```
+1. Run [languages.nf](languages.nf)
+   <details>
+   <summary>Solution</summary>
+
+   ```nextflow
+   workflow {
+      year_created_ch = Channel
+         .fromPath("$projectDir/data/year_created.csv", checkIfExists: true)
+         .splitCsv(skip: 1)
+      year_created_ch.view()
+
+      authors_ch = Channel
+         .fromPath("$projectDir/data/authors.csv", checkIfExists: true)
+         .splitCsv(skip: 1)
+      authors_ch.view()
+
+      homepage_ch = Channel
+         .fromPath("$projectDir/data/homepage.csv", checkIfExists: true)
+         .splitCsv(skip: 1)
+      homepage_ch.view()
+   }
+   ```
+   </details>
+
 ### join
 * Join two channels by a matching key
    ```groovy
    left  = channel.of(['X', 1], ['Y', 2], ['Z', 3], ['P', 7])
    right = channel.of(['Z', 6], ['Y', 5], ['X', 4])
-   left | join(right) | view()
+   left.join(right).view()
    ```
+   will print:
    ```
    [Z, 3, 6]
    [Y, 2, 5]
@@ -266,7 +327,7 @@
                       V2 = c( 1,   2,   3,   7))
    right = data.frame(V1 = c('Z', 'Y', 'X'),
                       V3 = c( 6,   5,   4))
-   left %>% join(right) %>% View()
+   left %>% inner_join(right) %>% View()
    ```
    ```
      V1 V2 V3
@@ -278,7 +339,50 @@
 * Many more operators are availabe, see https://www.nextflow.io/docs/latest/operator.html
 
 ### **Exercise 2.6**
-1. Open [concepts.nf](concepts.nf)
-1. Use the `join()` operator to join `languages` with `logos`, and print the result with `view()`
+1. Remove calls to the `view()` operator for channeles `year_created_ch`, `authors_ch` and `homepage_ch`
+1. Using the `join()` operator, created a new channel `joined_ch` that joins `year_created_ch`, `authors_ch` and `homepage_ch` and `view()` the output
+   <details>
+   <summary>Solution</summary>
+
+   ```nextflow
+   workflow {
+
+      year_created_ch = Channel
+         .fromPath("$projectDir/data/year_created.csv", checkIfExists: true)
+         .splitCsv(skip: 1)
+
+      authors_ch = Channel
+         .fromPath("$projectDir/data/authors.csv", checkIfExists: true)
+         .splitCsv(skip: 1)
+
+      homepage_ch = Channel
+         .fromPath("$projectDir/data/homepage.csv", checkIfExists: true)
+         .splitCsv(skip: 1)
+
+      joined_ch = year_created_ch
+         .join(authors_ch)
+         .join(homepage_ch)
+         .view()
+   }
+   ```
+   </details>
+
+1. Using the `view {}` operator on `joined_ch`, print the following:
+   ```
+   R was created in 1993 by Ross Ihaka and Robert Gentleman. To learn more vist https://www.r-project.org/
+   Python ...
+   Nextflow ...
+   ```
+   <details>
+   <summary>Solution</summary>
+
+   ```nextflow
+   joined_ch = year_created_ch
+      .join(authors_ch)
+      .join(homepage_ch)
+      .view { lang, year, auth, url -> 
+         "$lang was created in $year by $auth. To learn more vist $url" }
+   ```
+   </details>
 
 
