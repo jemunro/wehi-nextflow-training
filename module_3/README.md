@@ -5,7 +5,7 @@
 2. Understand channel creation
 3. Use operators to transform channels
 
-## 2.1 Groovy Scripting
+## 3.1 Groovy Scripting
 * Much of Nextflow scripting is done using the Groovy language
 * **Numeric Operations**
    ```groovy
@@ -42,7 +42,7 @@
    ```
 * See example code snippits in Groovy and Python: https://programming-idioms.org/cheatsheet/Groovy/Python
 
-## 2.2 Lists & Maps
+## 3.2 Lists & Maps
 * **Lists**
    * Nextflow/Groovy:
       ```groovy
@@ -88,14 +88,14 @@
       print(x['bar'])
       x['baz'] = 3
       ```
-### **Exercise 2.2**
+### **Exercise 3.2**
 1. Try out some of above Groovy examples using the groovy shell:
    ```
    module load java/1.8.0_92 groovy/4.0.0
    groovysh
    ```
 
-## 2.3 Closures
+## 3.3 Closures
 * Closures in groovy act as functions that can be passed to other functions
 * For example the `.collect()` function which is a property of lists in groovy
    ```groovy
@@ -131,7 +131,7 @@
    ```
 * See https://www.nextflow.io/docs/latest/script.html#closures
 
-### **Exercise 2.3**
+### **Exercise 3.3**
 1. In the Groovy shell, define the variable `data` as below
    ```groovy
    data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
@@ -161,7 +161,7 @@
    </details>
 
 
-## 2.4 Nextflow Scripting
+## 3.4 Nextflow Scripting
 **Implicit Variables**:
 * A number of variables are available in all nextflow scripts:
 * `params`: map storing workflow parameters
@@ -180,7 +180,7 @@
       input = file('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
       ```
 
-## 2.5 Channels
+## 3.5 Channels
 * Nextflow includes a number of ways to create channels
 * `channel.of(...)` 
   * create a channel that emits each of the arguments one at a time.
@@ -207,7 +207,7 @@
       channel.fromPath('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
       ```
    * See https://www.nextflow.io/docs/latest/channel.html#channel-factory for more ways to create channels
- ### **Exercise 2.5**
+ ### **Exercise 3.5**
 1. Open [languages.nf](languages.nf) and look at the CSV files in [data](data)
 1. Create and `view()` channels `authors_ch` and `homepage_ch` in the same way as `year_created_ch`
 1. Run [languages.nf](languages.nf)
@@ -232,7 +232,7 @@
    ```
    </details>
 
-## 2.6 Operators
+## 3.6 Operators
 ### Map
 * `map` is the most commonly used nextflow operater, and works the same as Groovy's `collect()` but applied to channels instead of lists.
 * Functionally similar to R's `lapply()` or Python's `map()` 
@@ -274,7 +274,7 @@
    [R, 1993]
    [Nextflow, 2013]
    ```
- ### **Exercise 2.6.1**
+ ### **Exercise 3.6.1**
 1. Update all channels in [languages.nf](languages.nf) with splitCsv as follows:
    ```nextflow
       workflow {
@@ -321,7 +321,7 @@
    [Y, 2, 5]
    [X, 1, 4]
    ```
-* This operation is roughly equivalent to Rs `dplyr::inner_join()` and Python's pandas `pd.merge()`. For example, in R:
+* This operation is roughly equivalent to R's `dplyr::inner_join()` and Python's pandas `pd.merge()`. For example, in R:
    ```R
    left  = data.frame(V1 = c('X', 'Y', 'Z', 'P'),
                       V2 = c( 1,   2,   3,   7))
@@ -338,7 +338,7 @@
 
 * Many more operators are availabe, see https://www.nextflow.io/docs/latest/operator.html
 
-### **Exercise 2.6**
+### **Exercise 3.6**
 1. Remove calls to the `view()` operator for channeles `year_created_ch`, `authors_ch` and `homepage_ch`
 1. Using the `join()` operator, created a new channel `joined_ch` that joins `year_created_ch`, `authors_ch` and `homepage_ch` and `view()` the output
    <details>
@@ -377,11 +377,11 @@
    <summary>Solution</summary>
 
    ```nextflow
-   joined_ch = year_created_ch
-      .join(authors_ch)
-      .join(homepage_ch)
-      .view { lang, year, auth, url -> 
-         "$lang was created in $year by $auth. To learn more vist $url" }
+      joined_ch = year_created_ch
+         .join(authors_ch)
+         .join(homepage_ch)
+         .view { lang, year, auth, url -> 
+            "$lang was created in $year by $auth. To learn more vist $url" }
    ```
    </details>
 
