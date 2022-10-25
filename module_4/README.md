@@ -81,6 +81,7 @@
 
 ### **Exercise 4.8**
 1. Remove the operator `.take(3)` from channel `fastq_url_ch`
+1. Uncomment the `workflow.onComplete {...}` section in [main.nf](main.nf)
 1. Run [main.nf](main.nf), now on the entire dataset
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf -resume
