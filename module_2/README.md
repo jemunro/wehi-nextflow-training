@@ -225,6 +225,6 @@
 ## 2.7 Execution Log
 * Nextflow executions logs can be generated after a workflow has run, see https://www.nextflow.io/docs/latest/tracing.html#execution-log
 
-### **Exercise 2.6**
+### **Exercise 2.7**
 1. Run `nextflow log` to list all previous executions, and note the `RUN NAME` of the most recent execution
 2. Run `nextflow log <RUN NAME> -f name,workdir,native_id,status,exit` replacing `<RUN NAME>` with the name from 1. This will list all jobs run in the previous execution.
