@@ -97,7 +97,7 @@
 
 ## 3.3 Closures
 * Closures in groovy act as functions that can be passed to other functions
-* For example the `.collect()` function which is a property of lists in groovy
+* For example the `.collect()` function which can be called on lists
    ```groovy
    l = [1, 2, 3]
    println( l.collect { it + 1 } )
@@ -146,11 +146,7 @@
    data.collect { s, n1, n2 -> "$s: ${n1*n2}" } 
    ```
    </details>
-1. In the Groovy shell, define the variable `data` as below
-   ```groovy
-   data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
-   ```
-   Using `collect`, transform data to the following nested list:  
+1. Using `collect`, transform data to the following nested list:  
    `[['foo', 1, 2, 2], ['bar', 3, 4, 12], ['baz', 5, 6, 30]]`
    <details>
    <summary>Solution</summary>
@@ -165,12 +161,13 @@
 **Implicit Variables**:
 * A number of variables are available in all nextflow scripts:
 * `params`: map storing workflow parameters
-* `projectDir`: A string variable of the directory containing the nextflow script being run. Useful for accessing workflow resource files.
+* `projectDir`: A string variable of the directory containing the nextflow script being run - useful for accessing workflow resource files
+* `launchDir`: A string variable of the directory containing the nextflow script was run from
 * See https://www.nextflow.io/docs/latest/script.html#implicit-variables
 
 **Files**:
-   * For creating `file` type variables, nextflow defines the function `file()`
-   * This must be used to exlicity convert a filepath string into a file object before passing to a process
+   * For creating `file` type variables, nextflow provides the function `file()`
+   * This must be used to convert a filepath string into a file object before passing to a process
    * We can use the `checkIfExists` optional argument to make sure the file exists:
       ```groovy
       input = file('/path/to/my_file.txt', checkIfExists: true)
@@ -201,7 +198,7 @@
   * Optional argument `checkIfExists` will throw an error if file does not exists
       ```groovy
       channel.fromPath('/path/to/sample.bam', checkIfExists: true)
-/home/users/allstaff/munro.j/pipelines/wehi-nextflow-training/examples      ```
+      ```
    * Files may be located on the web and will downloaded when needed:
        ```groovy
       channel.fromPath('https://www.wehi.edu.au/sites/default/files/wehi-logo-2020.png')
@@ -209,7 +206,7 @@
    * See https://www.nextflow.io/docs/latest/channel.html#channel-factory for more ways to create channels
  ### **Exercise 3.5**
 1. Open [languages.nf](languages.nf) and look at the CSV files in [data](data)
-1. Create and `view()` channels `authors_ch` and `homepage_ch` in the same way as `year_created_ch`
+1. Create channels `authors_ch` and `homepage_ch` in the same way as `year_created_ch`, and call `.view()` on them.
 1. Run [languages.nf](languages.nf)
    ```
    nextflow run ~/wehi-nextflow-training/module_3/languages.nf
@@ -234,10 +231,10 @@
 
 ## 3.6 Operators
 ### Map
-* `map` is the most commonly used nextflow operater, and works the same as Groovy's `collect()` but applied to channels instead of lists.
+* `map` is the most commonly used nextflow operater
+* functionally similar to `collect {}`, but applied to channels instead of lists
 * Functionally similar to R's `lapply()` or Python's `map()` 
-* The default variable name for a closure is `it`
-* for example:
+* The default variable name for a closure is `it`, e.g.:
    ```groovy
    channel.of(1, 2, 3).map { it * 2 }.view()
    ```
@@ -259,6 +256,7 @@
    2 * 2 = 4
    3 * 2 = 6
    ```
+* `view` also returns the values of the unmodified input channel, and is useful for developing and debugging
 ### splitCsv
 * Convert a CSV (or TSV) file into a nextflow channel
 * Optional argument `skip` may be used to skip a number of lines (e.g. the header)
@@ -274,7 +272,7 @@
    [R, 1993]
    [Nextflow, 2013]
    ```
- ### **Exercise 3.6.1**
+### **Exercise 3.6.1**
 1. Update all channels in [languages.nf](languages.nf) with splitCsv as follows:
    ```nextflow
       workflow {
@@ -338,7 +336,7 @@
 
 * Many more operators are availabe, see https://www.nextflow.io/docs/latest/operator.html
 
-### **Exercise 3.6**
+### **Exercise 3.6.2**
 1. Remove calls to the `view()` operator for channeles `year_created_ch`, `authors_ch` and `homepage_ch`
 1. Using the `join()` operator, created a new channel `joined_ch` that joins `year_created_ch`, `authors_ch` and `homepage_ch` and `view()` the output
    <details>

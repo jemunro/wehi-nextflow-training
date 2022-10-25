@@ -42,8 +42,10 @@ process QUANTIFICATION {
 
 process PLOT_TPM {
     container 'rocker/tidyverse:4.1.3'
+    memory '2 GB'
+    cpus 1
     publishDir "results", mode: 'copy'
-
+    
     input:
     path quant_results
 

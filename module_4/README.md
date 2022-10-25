@@ -7,7 +7,7 @@
 ## Modularisation
 * Nextflow DSL2 pipelines can be separated into modules and included in other scripts
 * This makes source code easier to maintain and share between pipelines
-* Take a look at [main.nf](main.nf), we can see the processes `DOWNLOAD` and `DOWNLOAD_FASTQS` are included from the source file [modules/download.nf](modules/download.nf)
+* Take a look at [main.nf](main.nf), we can see the processes `DOWNLOAD_REF` and `DOWNLOAD_FASTQS` are included from the source file [modules/download.nf](modules/download.nf)
 
 ### Configuration
 * Look at [nextflow.config](nextflow.config)
@@ -17,9 +17,14 @@
 ## **Exercise 4**
 * The pipeline in [main.nf](main.nf) is incomplete. 
 * We will work through completing the "TODO" sections of each process until the pipeline is complete
+* When complete, the pipeline will:
+    * Download SARS-CoV-2 paired illumina sequencing from SRA from 20 Victorian isolates across 2020
+    * Align to the SARS-CoV-2 reference genome
+    * Call vairants using BCFtools
+    * Create a plot of variants, visualising the changes in viral genotype over time
 
 ### **Exercise 4.1**
-1. Run [main.nf](main.nf)
+1. Run [main.nf](main.nf), downloading the sequencing data
     ```
     nextflow run ~/wehi-nextflow-training/module_4/main.nf
     ```
@@ -75,8 +80,8 @@
         memory '2 GB'
         time '2 h'
         module 'bwa'
-        tag "$sample"
         module 'samtools'
+        tag "$sample"
 
         input:
         tuple val(sample), path(fastq1), path(fastq2)

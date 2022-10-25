@@ -10,7 +10,7 @@
 1. Understand nextflow configuration
 
 ## 2.1 Pipeline Processes
-* Open [rna_seq_1.nf]('rna_seq_1.nf') and take a look.
+* Open [rna_seq_1.nf](rna_seq_1.nf) and take a look.
 
 *  Here we have a single process `INDEX` defined. This process builds the Salmon Index of the transcriptome provided.
     ```nextflow
@@ -28,11 +28,12 @@
     }
     ```
 * We can see this process definies an input of type `path` (i.e. a file)
-* The output is also of type `path`, and declares that a file with name 'salmon_index' should be created. 
-* If the output file does not exist after the process has run, Nextflow will throw an error.
+* In the script section, the variable `$transcriptome` will evaluate to the name of the input file
+* The output is also of type `path`, and declares that a file named 'salmon_index' should be created
+* If the output file does not exist after the process has run, Nextflow will throw an error
 
 ### **Exercise 2.1**
-1. Run [rna_seq_1.nf]('rna_seq_1.nf')
+1. Run [rna_seq_1.nf](rna_seq_1.nf)
    ```
    nextflow run ~/wehi-nextflow-training/module_2/rna_seq_1.nf
    ```
@@ -62,8 +63,9 @@
     With this, Nextflow will load the appropriate module prior to running the process script.
 
 ## 2.2 Process Directives
-* Directives specify the execution environment of a nextflow process. For example the `module` directive above specifies the software modules to be used.
-* Directives are placed at the top of a process definition.
+* Directives specify the execution environment of a nextflow process\
+* For example the `module` directive above specifies the software modules to be used
+* Directives are placed at the top of a process definition
 * See https://www.nextflow.io/docs/latest/process.html#directives for all available directives
 
 ### **Exercise 2.2**
@@ -98,7 +100,7 @@
 
 
 ## 2.3 Procecss inputs and outputs
-* Open [rna_seq_2.nf]('rna_seq_2.nf') and take a look.
+* Open [rna_seq_2.nf](rna_seq_2.nf) and take a look.
 * Here we have added a process `QUANTIFICATION`. This process takes the RNA-seq data and counts the reads originating from each transcrpit in the transcriptome:
     ```nextflow
     process QUANTIFICATION {
@@ -138,8 +140,8 @@
 
 ### **Exercise 2.4**
 1. Visit https://bioconda.github.io/recipes/salmon/README.html. Here we see Salmon is available in a Docker container at "quay.io/biocontainers/salmon:<tag>". If we visit the "salmon/tags" link we can find that the latest available tag is "1.9.0--h7e5ed60_1"
-1. Replace the directive `module 'salmon/1.9.0'` with `container 'quay.io/biocontainers/salmon:1.9.0--h7e5ed60_1'` in the processes `INDEX` and `QUANTIFICATION` in [rna_seq_2.nf]('rna_seq_2.nf')
-1. Run [rna_seq_2.nf]('rna_seq_2.nf')
+1. Replace the directive `module 'salmon/1.9.0'` with `container 'quay.io/biocontainers/salmon:1.9.0--h7e5ed60_1'` in the processes `INDEX` and `QUANTIFICATION` in [rna_seq_2.nf](rna_seq_2.nf)
+1. Run [rna_seq_2.nf](rna_seq_2.nf)
     ```
     nextflow run ~/wehi-nextflow-training/module_2/rna_seq_2.nf
     ```
@@ -175,11 +177,13 @@
 
 
 ## 2.6 Publishing Outputs
-* Open [rna_seq_3.nf]('rna_seq_3.nf') and take a look.
+* Open [rna_seq_3.nf](rna_seq_3.nf) and take a look.
 * Here we have added a process `PLOT_TPM`. This process is an R script that takes RNA seq quantification results and creates a plot:
     ```nextflow
     process PLOT_TPM {
         container 'rocker/tidyverse:4.1.3'
+        memory '2 GB'
+        cpus 1
         publishDir "results", mode: 'copy'
 
         input:
@@ -217,7 +221,7 @@
 
 ### **Exercise 2.6**
 1. Open at [nextflow.config](nextflow.config) and change `process.executor` from 'local' to 'slurm'. This will direct jobs to be submitted to the slurm queue.
-1. Run [rna_seq_3.nf]('rna_seq_3.nf') and observe the output
+1. Run [rna_seq_3.nf](rna_seq_3.nf) and observe the output
     ```
     nextflow run ~/wehi-nextflow-training/module_2/rna_seq_3.nf -resume
     ```
