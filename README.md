@@ -19,7 +19,7 @@ You can connect using vc7-shared as the remote host, for more details see [remot
     cd ~
     git clone https://github.com/jemunro/wehi-nextflow-training.git
     ```
-2. Create and navigate to a run directory on your vast scractch space
+2. Create and navigate to a run directory on your vast scratch space
     ```
     mkdir -p /vast/scratch/users/$USER/nf-training-run
     cd /vast/scratch/users/$USER/nf-training-run

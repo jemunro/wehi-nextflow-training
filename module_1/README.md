@@ -67,7 +67,7 @@ Here will add another process `ASK_QUESTION` to run on the output of `GREET`.
    process ASK_QUESTION {
       input: val(x)
       output: stdout
-      script: "echo -n $x, $question"
+      script: "echo -n $x, $params.question"
    }
    ```
 1. Create a channel `ask_question_ch` by running `ASK_QUESTION` on `greet_ch`

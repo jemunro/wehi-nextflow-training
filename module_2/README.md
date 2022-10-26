@@ -63,7 +63,7 @@
     With this, Nextflow will load the appropriate module prior to running the process script.
 
 ## 2.2 Process Directives
-* Directives specify the execution environment of a nextflow process\
+* Directives specify the execution environment of a nextflow process
 * For example the `module` directive above specifies the software modules to be used
 * Directives are placed at the top of a process definition
 * See https://www.nextflow.io/docs/latest/process.html#directives for all available directives
