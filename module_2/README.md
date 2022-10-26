@@ -99,7 +99,7 @@
     </details>
 
 
-## 2.3 Procecss inputs and outputs
+## 2.3 Process inputs and outputs
 * Open [rna_seq_2.nf](rna_seq_2.nf) and take a look.
 * Here we have added a process `QUANTIFICATION`. This process takes the RNA-seq data and counts the reads originating from each transcrpit in the transcriptome:
     ```nextflow
