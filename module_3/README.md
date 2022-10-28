@@ -137,7 +137,7 @@
    data = [['foo', 1, 2], ['bar', 3, 4], ['baz', 5, 6]]
    ```
    Using `collect`, transform the data to the following list:  
-   `["foo: 3", "bar: 12", "baz: 30"]`  
+   `["foo: 2", "bar: 12", "baz: 30"]`  
    (the number is equal to the product of the numbers in the list)
    <details>
    <summary>Solution</summary>
